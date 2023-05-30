@@ -5,8 +5,7 @@
         <div class="column1">
           <el-image :src="url" :preview-src-list="srcList"></el-image>
           <div>
-            <el-switch v-model="isCollapse" active-color="#13ce66" inactive-color="#ff4949" >
-            </el-switch>
+           
             <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
               :collapse="isCollapse">
 
