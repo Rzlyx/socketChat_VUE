@@ -7,6 +7,7 @@ import MsgUser from '../views/MsgUser.vue'
 import Contactor from '../views/Contactor.vue'
 import ChatMsg1 from '../views/ChatMsg1.vue'
 import ChatMsg2 from '../views/ChatMsg2.vue'
+import Infomation from '../views/Infomation.vue'
 
 Vue.use(VueRouter)
 
@@ -28,7 +29,8 @@ const routes = [
       },
       { path: '/contactor', component: Contactor }
     ]
-  }
+  },
+  { path: '/infomation', component: Infomation}
 ]
 
 const router = new VueRouter({

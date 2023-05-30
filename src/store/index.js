@@ -17,17 +17,19 @@ const store = new Vuex.Store({
         time: "2023-05-22T08:15:00",
         picture:
           "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
+        signature:'111',
         highlighted: false,
         num: 0,
 
       },
       {
-        id: "21696499",
+        id: "33336499",
         name: "456789",
         new_msg: "早上好",
         time: "2023-05-23T09:45:00",
         picture:
           "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
+        signature:'222',
         highlighted: false,
         num: 0
       },
@@ -38,6 +40,7 @@ const store = new Vuex.Store({
         time: "2023-05-21T14:20:00",
         picture:
           "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
+        signature:'333',
         highlighted: false,
         num: 0
       },

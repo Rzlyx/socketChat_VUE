@@ -14,7 +14,7 @@ Vue.prototype.$message = Message;
 let socket = null; // 全局 WebSocket 连接
 
 function createWebSocket(token2) {
-  socket = new WebSocket('ws://localhost:8080/ws/' + token2);
+  socket = new WebSocket('ws://192.168.1.131:8080/ws/' + token2);
 
   socket.onopen = function () {
     console.log("连接成功")

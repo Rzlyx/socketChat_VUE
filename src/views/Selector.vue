@@ -3,10 +3,8 @@
     <el-aside width="65px">
       <div class="container">
         <div class="column1">
-          <el-image :src="url" :preview-src-list="srcList"></el-image>
+          <el-image :src="url" @click="GotoPersonalInfo()"></el-image>
           <div>
-            <el-switch v-model="isCollapse" active-color="#13ce66" inactive-color="#ff4949" >
-            </el-switch>
             <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
               :collapse="isCollapse">
 
@@ -106,11 +104,7 @@ export default {
       user_value: 0,
       // 动态个数
       value2: 0,
-      isCollapse: true,
       url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-      srcList: [
-        'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
-      ],
       msg_visable: false,
       user_visable: false,
       value2_visable: false,
@@ -128,6 +122,9 @@ export default {
     },
     goto_contactor() {
       this.$router.push('/contactor')
+    },
+    GotoPersonalInfo(){
+      this.$router.push('/infomation')
     }
   },
   watch: {
