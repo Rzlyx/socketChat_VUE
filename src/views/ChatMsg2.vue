@@ -1,5 +1,10 @@
 <template>
   <div class="chat-dialog" v-chat-scroll>
+    <div class="select">
+       <p>
+        {{ user.remark }}
+      </p>
+    </div>
     <div class="chat-container">
       <div v-for="message in messages" :key="message.id" class="message-container">
         <img :src="avatar" alt="Avatar" class="avatar" v-if="message.send_id !== userId">
@@ -9,6 +14,32 @@
           </div>
         </div>
         <img :src="avatar" alt="Avatar" class="avatar me" v-if="message.send_id === userId">
+      </div>
+    </div>
+
+    <div class="select2">
+      <div>
+        <el-tooltip class="item" effect="dark" content="发送图片" placement="top">
+        <i class="el-icon-picture-outline"></i>
+      </el-tooltip>
+      </div>
+      &nbsp; &nbsp;
+      <div>
+        <el-tooltip class="item" effect="dark" content="视频聊天" placement="top">
+        <i class="el-icon-video-camera"></i>
+      </el-tooltip>
+      </div>
+      &nbsp; &nbsp;
+      <div>
+        <el-tooltip class="item" effect="dark" content="电话聊天" placement="top">
+        <i class="el-icon-phone-outline"></i>
+      </el-tooltip>
+      </div>
+      &nbsp; &nbsp;
+      <div @click="get_history_msg()">
+        <el-tooltip class="item" effect="dark" content="历史消息" placement="top">
+        <i class="el-icon-timer" ></i>
+      </el-tooltip>
       </div>
     </div>
     <div class="input-box">
@@ -28,6 +59,13 @@ export default {
   },
   data() {
     return {
+      user:{
+        id:'',
+        username:'123456',
+        remark:'郑杰',
+        identif:1,
+        picture:'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
+      },
       messages: [
 
       ],
@@ -47,6 +85,9 @@ export default {
     };
   },
   methods: {
+    get_history_msg(){
+
+    },
     getCurrentTime() {
       const now = new Date();
 
@@ -125,18 +166,51 @@ export default {
 </script>
     
 <style scoped>
+.el-icon-picture-outline:hover {
+  cursor: pointer;
+  color: blue;
+}
+.el-icon-video-camera:hover {
+  cursor: pointer;
+  color: blue;
+}
+.el-icon-phone-outline:hover {
+  cursor: pointer;
+  color: blue;
+}
+.el-icon-timer:hover {
+  cursor: pointer;
+  color: blue;
+}
+.select2{
+  height: 4%;
+  display: flex;
+  width: 100%;
+  height: 30px;
+}
+.select{
+  margin: 0;
+  top: 0;
+  /* display: flex; */
+  font-weight: bold;
+  width: 100%;
+  height: 5%;
+}
 .chat-dialog {
   border: 1px solid #ccc;
   height: 100%;
-  padding: 10px;
+  padding-top: 0px;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-bottom: 16px; /* 添加此行，移动 padding 到 .chat-dialog */
   position: relative;
 }
 
 .chat-container {
+  padding: 0;
   display: flex;
   flex-direction: column;
-  height: calc(100% - 60px);
-  padding: 16px;
+  height: 82%;
   background-color: #f9f9f9;
   overflow-y: auto;
 }
