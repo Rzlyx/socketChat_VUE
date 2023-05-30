@@ -3,10 +3,7 @@
         <el-aside>
             <div class="msg_list_container">
                 <div class="search">
-                    <div class="input_container">
-                        <input class="input" />
-                        <button class="button">搜</button>
-                    </div>
+                    
                 </div>
                 <div class="user_list">
                     <div v-for="(user, index) in sortedUserlist" :key="user.id"

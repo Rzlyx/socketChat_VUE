@@ -5,6 +5,7 @@
         <div class="column1">
           <el-image :src="url" @click="GotoPersonalInfo()"></el-image>
           <div>
+           
             <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
               :collapse="isCollapse">
 

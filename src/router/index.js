@@ -8,6 +8,7 @@ import Contactor from '../views/Contactor.vue'
 import ChatMsg1 from '../views/ChatMsg1.vue'
 import ChatMsg2 from '../views/ChatMsg2.vue'
 import Infomation from '../views/Infomation.vue'
+import VideoChat from '../views/VideoChat.vue'
 
 Vue.use(VueRouter)
 
@@ -17,14 +18,15 @@ const routes = [
   { path: '/register', component: Register },
   {
     path: '/selector', component: Selector,
-    redirect:'/msg_user',
+    redirect: '/msg_user',
     children: [
       {
         path: '/msg_user',
         component: MsgUser,
         children: [
           { path: "/chat_msg1/:userId", component: ChatMsg1 },
-          { path: "/chat_msg2/:userId", component: ChatMsg2 }
+          { path: "/chat_msg2/:userId", component: ChatMsg2 },
+          { path: "/video_chat", component: VideoChat }
         ]
       },
       { path: '/contactor', component: Contactor }
