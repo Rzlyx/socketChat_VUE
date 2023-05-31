@@ -39,17 +39,22 @@ export default {
 
       navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         .then(stream => {
+          console.log(1)
           this.localStream = stream;
+          console.log(2)
           this.$refs.localVideo.srcObject = stream;
-
+          console.log(3)
           this.createPeerConnection();
+          console.log(4)
           this.addLocalStreamToPeerConnection();
+          console.log(5)
           this.createAndSendOffer();
 
           // 手动触发loadeddata事件
           this.$refs.localVideo.dispatchEvent(new Event('loadeddata'));
         })
         .catch(error => {
+          console.log(8)
           console.error('Error accessing media devices:', error);
         });
 
