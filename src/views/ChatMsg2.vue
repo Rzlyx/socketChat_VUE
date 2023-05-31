@@ -1,7 +1,7 @@
 <template>
   <div class="chat-dialog" v-chat-scroll>
     <div class="select">
-       <p>
+      <p>
         {{ user.remark }}
       </p>
     </div>
@@ -10,36 +10,43 @@
         <img :src="avatar" alt="Avatar" class="avatar" v-if="message.send_id !== userId">
         <div class="message-wrapper" :class="message.send_id === userId ? 'me' : 'other'">
           <div class="message" :class="message.send_id === userId ? 'me' : 'other'">
-            {{ message.context }}
+            <template v-if="message.type === 'image'">
+              <img :src="message.imageSrc" class="message-image" alt="Image">
+            </template>
+            <template v-else>
+              {{ message.context }}
+            </template>
+            <!-- <span class="message-time">{{ message.time }}</span> -->
           </div>
         </div>
         <img :src="avatar" alt="Avatar" class="avatar me" v-if="message.send_id === userId">
       </div>
     </div>
 
+
     <div class="select2">
       <div>
         <el-tooltip class="item" effect="dark" content="发送图片" placement="top">
-        <i class="el-icon-picture-outline"></i>
-      </el-tooltip>
+          <i class="el-icon-picture-outline"></i>
+        </el-tooltip>
       </div>
       &nbsp; &nbsp;
       <div>
         <el-tooltip class="item" effect="dark" content="视频聊天" placement="top">
-        <i class="el-icon-video-camera"></i>
-      </el-tooltip>
+          <i class="el-icon-video-camera" @click="video_chat()"></i>
+        </el-tooltip>
       </div>
       &nbsp; &nbsp;
       <div>
         <el-tooltip class="item" effect="dark" content="电话聊天" placement="top">
-        <i class="el-icon-phone-outline"></i>
-      </el-tooltip>
+          <i class="el-icon-phone-outline"></i>
+        </el-tooltip>
       </div>
       &nbsp; &nbsp;
       <div @click="get_history_msg()">
         <el-tooltip class="item" effect="dark" content="历史消息" placement="top">
-        <i class="el-icon-timer" ></i>
-      </el-tooltip>
+          <i class="el-icon-timer"></i>
+        </el-tooltip>
       </div>
     </div>
     <div class="input-box">
@@ -59,12 +66,21 @@ export default {
   },
   data() {
     return {
-      user:{
-        id:'',
-        username:'123456',
-        remark:'郑杰',
-        identif:1,
-        picture:'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
+      msg: {
+        id: "",
+        content: "", // 消息内容
+        time: "",
+        send_id: "",
+        receive_id: "",
+        type: "", // 消息类型，例如 'image'
+        imageSrc: "" // 图片消息的 URL
+      },
+      user: {
+        id: '',
+        username: '123456',
+        remark: '郑杰',
+        identif: 1,
+        picture: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
       },
       messages: [
 
@@ -75,18 +91,28 @@ export default {
       userId: '',
       contactorId: '',
       send_message: {
-        id: '',
-        context: ' ',
-        time: '',
-        send_id: '',
-        receive_id: '',
-        type: '1',
+        id: "",
+        content: "", // 消息内容
+        time: "", // 消息时间
+        send_id: "",
+        receive_id: "",
+        type: "", // 消息类型，例如 'image'
+        imageSrc: "" // 图片消息的 URL
+        // id: '',
+        // context: ' ',
+        // time: '',
+        // send_id: '',
+        // receive_id: '',
+        // type: '1',
       }
     };
   },
   methods: {
-    get_history_msg(){
-
+    get_history_msg() {
+      
+    },
+    video_chat(){
+      this.$router.push('/video_chat')
     },
     getCurrentTime() {
       const now = new Date();
@@ -133,11 +159,9 @@ export default {
         receive_id: this.contactorId,
         type: '1',
       });
-
       this.$store.commit('addMessageLocal', this.messages);
-
-
       this.$getWebSocket().send(JSON.stringify(this.messages[this.messages.length - 1]))
+
       this.newMessage = "";
       this.$nextTick(() => {
         const chatContainer = this.$el.querySelector('.chat-container')
@@ -145,7 +169,7 @@ export default {
       });
 
     },
-    
+
   },
   mounted() {
   },
@@ -159,7 +183,7 @@ export default {
     }
 
     this.$store.commit('inspectMsg', this.contactorId);
-    
+
   },
 
 };
@@ -170,25 +194,30 @@ export default {
   cursor: pointer;
   color: blue;
 }
+
 .el-icon-video-camera:hover {
   cursor: pointer;
   color: blue;
 }
+
 .el-icon-phone-outline:hover {
   cursor: pointer;
   color: blue;
 }
+
 .el-icon-timer:hover {
   cursor: pointer;
   color: blue;
 }
-.select2{
+
+.select2 {
   height: 4%;
   display: flex;
   width: 100%;
   height: 30px;
 }
-.select{
+
+.select {
   margin: 0;
   top: 0;
   /* display: flex; */
@@ -196,13 +225,15 @@ export default {
   width: 100%;
   height: 5%;
 }
+
 .chat-dialog {
   border: 1px solid #ccc;
   height: 100%;
   padding-top: 0px;
   padding-left: 5px;
   padding-right: 5px;
-  padding-bottom: 16px; /* 添加此行，移动 padding 到 .chat-dialog */
+  padding-bottom: 16px;
+  /* 添加此行，移动 padding 到 .chat-dialog */
   position: relative;
 }
 

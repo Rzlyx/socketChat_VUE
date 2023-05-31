@@ -12,6 +12,7 @@
     "element-ui": "^2.4.5",
     "particles.js": "^2.0.0",
     "socket.io-client": "^4.6.1",
+    "videojs-contrib-media-sources": "^4.7.2",
     "vue": "^2.6.14",
     "vue-chat-scroll": "^1.4.0",
     "vue-particles": "^1.0.9",
@@ -22,6 +23,7 @@
     "websocket": "^1.0.34"
   },
   "devDependencies": {
+    "@types/video.js": "^7.3.52",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
