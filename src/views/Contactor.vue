@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="block">
-            <div class="lable">
+            <div class="lable" @click="$router.push('/addFrind')">
                 <div>
                     <img :src="avator" alt="新的朋友">
                 </div>
@@ -11,10 +11,25 @@
             </div>
         </div>
 
+        <!-- <el-dialog title="添加朋友" :visible.sync="dialogFormVisible">
+            <el-form :model="form">
+                <el-form-item label="账号" :label-width="formLabelWidth">
+                    <el-input v-model="friendform.name" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="描述" :label-width="formLabelWidth">
+                    <el-input v-model="friendform.desc" autocomplete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+            </div>
+        </el-dialog> -->
+
         <div class="flex1">
             <div class="user_list">
                 <div v-for="(user, index) in this.List" :key="user.id"
-                :class="['user-container', { highlighted: user.id === highlightedUserId }]"
+                    :class="['user-container', { highlighted: user.id === highlightedUserId }]"
                     @click="toggleHighlight(user.id)">
                     <div class="user-container">
                         <div class="user-picture">
@@ -55,9 +70,12 @@
                                 </el-form>
                             </div>
                             <div class="limits">
-                                <el-switch style="display: block ;margin-left: 41px;" v-model="sw1" inactive-text="仅聊天"></el-switch>
-                                <el-switch style="display: block ;margin-left: 41px;" v-model="sw2" inactive-text="不让他看朋友圈"></el-switch>
-                                <el-switch style="display: block ;margin-left: 41px;" v-model="sw3" inactive-text="不看他朋友圈"></el-switch>
+                                <el-switch style="display: block ;margin-left: 41px;" v-model="sw1"
+                                    inactive-text="仅聊天"></el-switch>
+                                <el-switch style="display: block ;margin-left: 41px;" v-model="sw2"
+                                    inactive-text="不让他看朋友圈"></el-switch>
+                                <el-switch style="display: block ;margin-left: 41px;" v-model="sw3"
+                                    inactive-text="不看他朋友圈"></el-switch>
                             </div>
                             <div style="padding: 14px;">
                                 <div class="bottom clearfix">
@@ -70,6 +88,76 @@
             </div>
         </div>
 
+        <div class="block1">
+            <div class="lable" @click="$router.push('/addGroup')">
+                <div>
+                    <img :src="avator" alt="新的朋友">
+                </div>
+                <div>
+                    <p>新的群聊</p>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="flex2">
+            <div class="group_list">
+                <div v-for="(group, index) in this.my_group_list" :key="group.group_id">
+                    <div class="group-container">
+                        <div class="group-picture">
+                            <el-badge :value="user.num" class="item" :hidden="user.num === 0">
+                                <img :src="user.picture" alt="用户头像" />
+                            </el-badge>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">{{ user.name }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="operate" v-if="Isclick">
+                <el-row>
+                    <el-col>
+                        <el-card :body-style="{ padding: '0px' }">
+                            <div class="briefintro">
+                                <div>
+                                    <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
+                                        class="image">
+                                </div>
+                                <div class="info">
+                                    {{ this.info.name }}
+                                    {{ this.info.signature }}
+                                </div>
+
+                            </div>
+                            <div class="mark">
+                                <el-form :model="form" label-width="80px">
+                                    <el-form-item label="备注">
+                                        <el-input v-model="form.notes" placeholder="无" :border="false"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="标签">
+                                        <el-input v-model="form.tag" placeholder="无" :border="false"></el-input>
+                                    </el-form-item>
+                                </el-form>
+                            </div>
+                            <div class="limits">
+                                <el-switch style="display: block ;margin-left: 41px;" v-model="sw1"
+                                    inactive-text="仅聊天"></el-switch>
+                                <el-switch style="display: block ;margin-left: 41px;" v-model="sw2"
+                                    inactive-text="不让他看朋友圈"></el-switch>
+                                <el-switch style="display: block ;margin-left: 41px;" v-model="sw3"
+                                    inactive-text="不看他朋友圈"></el-switch>
+                            </div>
+                            <div style="padding: 14px;">
+                                <div class="bottom clearfix">
+                                    <el-button type="text" class="button" @click="JumpChat()">发消息</el-button>
+                                </div>
+                            </div>
+                        </el-card>
+                    </el-col>
+                </el-row>
+            </div>
+        </div> -->
+
     </div>
 </template>
 
@@ -81,15 +169,23 @@ export default {
         return {
             List: [
             ],
+            my_group_list: [
+
+            ],
             avator: 'https://img1.baidu.com/it/u=1582149699,3121859091&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=501',
             Isclick: false,
             info: {},
-            sw1:false,
-            sw2:false,
-            sw3:false,
-            form:{},
-            highlightedUserId:'',
-            index1:''
+            sw1: false,
+            sw2: false,
+            sw3: false,
+            form: {},
+            highlightedUserId: '',
+            index1: '',
+            // dialogFormVisible: false,
+            // friendform: {
+            //     name: '',
+            //     desc: ''
+            // }
         }
     },
     methods: {
@@ -103,7 +199,7 @@ export default {
             // console.log(this.info.name)
             // this.$router.replace('/contactor/' + index + '/' + userId)
         },
-        JumpChat(){
+        JumpChat() {
             this.index1 = window.sessionStorage.getItem("msg")
             if (this.index1 == undefined || this.index1 == '2') {
                 this.index1 = '1'
@@ -114,35 +210,40 @@ export default {
                 window.sessionStorage.setItem("msg", "2")
             }
             this.Isclick = false,
-            this.$router.replace('/chat_msg' + this.index1 + '/' + window.sessionStorage.getItem("contactor_id"))
+                this.$router.replace('/chat_msg' + this.index1 + '/' + window.sessionStorage.getItem("contactor_id"))
         },
-        ClearData(){
+        ClearData() {
             // this.List = [],
             // this.avator = '',
             this.info = {},
-            this.form = {}
+                this.form = {}
         }
     },
     created() {
         this.List = this.$store.state.user_list
+        this.my_group_list = this.$store.state.my_group_list
     }
 }
 </script>
 
 <style scoped>
-
 .limits {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
+
 .limits span {
-  flex-grow: 1;
-  text-align: left; /* 设置文字左对齐 */
+    flex-grow: 1;
+    text-align: left;
+    /* 设置文字左对齐 */
 }
+
 .limits .el-switch {
-  flex-shrink: 0;
-  margin-left: 10px; /* 开关与文字之间的间距 */
-  text-align: right; /* 设置开关右对齐 */
+    flex-shrink: 0;
+    margin-left: 10px;
+    /* 开关与文字之间的间距 */
+    text-align: right;
+    /* 设置开关右对齐 */
 }
 
 .user_list {
@@ -169,6 +270,7 @@ export default {
     background-color: rgb(216, 216, 217);
     /* 高亮样式 */
 }
+
 .user-picture {
     margin-right: 10px;
 }
@@ -181,6 +283,12 @@ export default {
 
 .block {
     margin-top: 20px;
+    margin-left: 2px;
+    width: 320px;
+}
+
+.block1 {
+    margin-top: 0px;
     margin-left: 2px;
     width: 320px;
 }
@@ -205,8 +313,10 @@ export default {
     margin-top: 5%;
     width: 40%;
 }
+
 .mark .el-form-item {
-  width: 500px; /* 设置表单项的宽度 */
+    width: 500px;
+    /* 设置表单项的宽度 */
 }
 
 .briefintro {
@@ -224,9 +334,10 @@ export default {
     margin-left: 25px;
     margin-right: 45px;
     background-color: greenyellow;
-    
+
 }
-button{
+
+button {
     margin-left: 45%;
     border-radius: 5px;
     line-height: 2px;

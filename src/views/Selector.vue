@@ -6,8 +6,7 @@
           <el-image :src="url" @click="GotoPersonalInfo()"></el-image>
           <div>
            
-            <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
-              :collapse="isCollapse">
+            <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
 
 
               <el-menu-item :index=url1 @click="goto_msg_user">
