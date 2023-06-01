@@ -48,7 +48,7 @@ export default {
         login() {
             this.$refs.form.validate(async valid => {
                 if (!valid) return;
-                const { data: res } = await this.$http.post('http://192.168.1.131:8080/login', this.form);
+                const { data: res } = await this.$http.post('http://192.168.1.222:8070/login', this.form);
                 if (res.code !== 1000) return this.$message.error('登录失败');
                 window.sessionStorage.setItem("token", res.data.token);
                 window.sessionStorage.setItem("userid", res.data.id);

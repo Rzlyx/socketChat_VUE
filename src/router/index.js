@@ -10,6 +10,7 @@ import ChatMsg2 from '../views/ChatMsg2.vue'
 import Infomation from '../views/Infomation.vue'
 import VideoChat from '../views/VideoChat.vue'
 import AddFrind from '../views/AddFrind.vue'
+import AddGroup from '../views/AddGroup.vue'
 
 Vue.use(VueRouter)
 
@@ -34,10 +35,11 @@ const routes = [
     ]
   },
   { path: '/infomation', component: Infomation},
-  { path: '/addFrind', component: AddFrind}
+  { path: '/addFrind', component: AddFrind},
+  { path: '/addGroup', component: AddGroup}
 ]
 
-const router = new VueRouter({
+const router = new VueRouter({ 
   routes
 })
 
