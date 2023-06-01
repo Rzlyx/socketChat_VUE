@@ -45,6 +45,19 @@ const store = new Vuex.Store({
         num: 0
       },
     ],
+    my_group_list: [
+      {
+        group_id: '13145738',
+        group_name: '战地2042交流群',
+        picture: 'http://pic.imeitou.com/uploads/allimg/211216/3-211216094252640.jpg'
+      },
+      {
+        group_id: '64225367',
+        group_name: '战地5薯薯群',
+        picture: 'http://pic.imeitou.com/uploads/allimg/211216/3-21121609425U18.jpg'
+      }
+    ]
+
 
   },
   mutations: {
