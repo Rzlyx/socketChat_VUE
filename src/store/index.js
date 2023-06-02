@@ -9,6 +9,48 @@ const store = new Vuex.Store({
     moments: 0,
     message: {
     },
+    contactor_list:[
+      {
+        id: "21690096",
+        name: "123456",
+        picture:
+          "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
+        signature:'111',
+        highlighted: false,
+        msg_type:1,
+        status1: true,
+        status2:true,
+        status3:true,
+        num: 0,
+
+      },
+      {
+        id: "33336499",
+        name: "456789",
+        picture:
+          "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
+        signature:'222',
+        highlighted: false,
+        msg_type:2,
+        status1: true,
+        status2:true,
+        status3:true,
+        num: 0
+      },
+      {
+        id: "987456",
+        name: "任隽延",
+        picture:
+          "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
+        signature:'333',
+        highlighted: false,
+        msg_type:3,
+        status1: true,
+        status2:true,
+        status3:true,
+        num: 0
+      },
+    ],
     user_list: [
       {
         id: "21690096",
@@ -47,14 +89,30 @@ const store = new Vuex.Store({
     ],
     my_group_list: [
       {
-        group_id: '13145738',
-        group_name: '战地2042交流群',
-        picture: 'http://pic.imeitou.com/uploads/allimg/211216/3-211216094252640.jpg'
+        group_id: "13145738",
+        group_name: "战地2042交流群",
+        picture:
+          "http://pic.imeitou.com/uploads/allimg/211216/3-211216094252640.jpg",
+        signature:'111',
+        highlighted: false,
+        msg_type:1,
+        status1: true,
+        status2:true,
+        status3:true,
+        num: 0,
       },
       {
-        group_id: '64225367',
-        group_name: '战地5薯薯群',
-        picture: 'http://pic.imeitou.com/uploads/allimg/211216/3-21121609425U18.jpg'
+        group_id: "64225367",
+        group_name: "战地5薯薯群",
+        picture:
+          "http://pic.imeitou.com/uploads/allimg/211216/3-21121609425U18.jpg",
+        signature:'111',
+        highlighted: false,
+        msg_type:2,
+        status1: true,
+        status2:true,
+        status3:true,
+        num: 0,
       }
     ]
 

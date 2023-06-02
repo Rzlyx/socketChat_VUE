@@ -82,6 +82,7 @@
 }
 
 .el-aside {
+  width: 65px;
   flex: 0 0 auto;
 }
 
