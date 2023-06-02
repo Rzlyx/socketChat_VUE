@@ -101,7 +101,7 @@
 
 .user_list {
     margin-top: 10px;
-    width: 320px;
+    width: 300px;
 }
 
 .el-main {
