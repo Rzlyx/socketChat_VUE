@@ -16,9 +16,9 @@
 
             <div class="flex1">
                 <div class="user_list">
-                    <div v-for="(user, index) in this.List" :key="user.id"
-                        :class="['user-container2', { highlighted: user.id === highlightedUserId }]"
-                        @click="toggleHighlight(user.id)">
+                    <div v-for="(user, index) in this.List" :key="user.friend_id"
+                        :class="['user-container2', { highlighted: user.friend_id === highlightedUserId }]"
+                        @click="toggleHighlight(user.friend_id)">
                         <div class="user-container">
                             <div class="user-picture">
                                 <!-- <img :src="user.picture" alt="用户头像" /> -->
@@ -225,6 +225,11 @@ export default {
         }
     },
     methods: {
+        async get_contactor_list() {
+            const id = window.sessionStorage.getItem("userid")
+            const { data: res } = await this.$http.post("http://127.0.0.1:8070/queryFriendList", { user_id: parseInt(id, 10) });
+            this.$store.commit('updateContactList', res.data.friend_list.friends);
+        },
         choose_msg_type(type) {
             if (type == 1) {
                 return "接收消息并展示"
@@ -234,31 +239,26 @@ export default {
                 return "不接受消息"
             }
         },
-        toggleHighlight(userId) {
+        async toggleHighlight(userId) {
             this.highlightedUserId = this.highlightedUserId === userId ? '' : userId;
             this.ClearData()
             window.sessionStorage.setItem("contactor_id", userId)
-            this.info = this.List.find(item => item.id === userId)
+            const info = this.List.find(item => item.friend_id === userId)
+            const form={
+                "friendship_id": Number(info.friendship_id,10),
+                "user_id": Number(userId),
+                "friend_id": Number(info.friend_id)
+            }
+            setTimeout(() => {
+                console.log(Number("2172620156973350912"),info.friendship_id);
+            }, 200);
+            const { data: res } = await this.$http.post("http://127.0.0.1:8070/queryFriendInfo", form)
+            setTimeout(() => {
+                console.log(res);
+            }, 200);
+
             this.Isclick2 = false
             this.Isclick = true
-            if (this.info.msg_type == 1) {
-                this.options[0].disabled = true
-                this.options[1].disabled = false
-                this.options[2].disabled = false
-            } else if (this.info.msg_type == 2) {
-                this.options[0].disabled = false
-                this.options[1].disabled = true
-                this.options[2].disabled = false
-            } else {
-                this.options[0].disabled = false
-                this.options[1].disabled = false
-                this.options[2].disabled = true
-            }
-            this.status1 = this.info.status1
-            this.status2 = this.info.status2
-            this.status3 = this.info.status3
-            // console.log(this.info.name)
-            // this.$router.replace('/contactor/' + index + '/' + userId)
         },
 
         MouseClick(id) {
@@ -301,6 +301,7 @@ export default {
         }
     },
     created() {
+
         this.List = this.$store.state.contactor_list
         this.my_group_list = this.$store.state.my_group_list
     }

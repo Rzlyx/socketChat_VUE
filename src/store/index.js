@@ -10,46 +10,46 @@ const store = new Vuex.Store({
     message: {
     },
     contactor_list:[
-      {
-        id: "21690096",
-        name: "123456",
-        picture:
-          "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
-        signature:'111',
-        highlighted: false,
-        msg_type:1,
-        status1: true,
-        status2:true,
-        status3:true,
-        num: 0,
+      // {
+      //   id: "21690096",
+      //   name: "123456",
+      //   picture:
+      //     "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
+      //   signature:'111',
+      //   highlighted: false,
+      //   msg_type:1,
+      //   status1: true,
+      //   status2:true,
+      //   status3:true,
+      //   num: 0,
 
-      },
-      {
-        id: "33336499",
-        name: "456789",
-        picture:
-          "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
-        signature:'222',
-        highlighted: false,
-        msg_type:2,
-        status1: true,
-        status2:true,
-        status3:true,
-        num: 0
-      },
-      {
-        id: "987456",
-        name: "任隽延",
-        picture:
-          "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
-        signature:'333',
-        highlighted: false,
-        msg_type:3,
-        status1: true,
-        status2:true,
-        status3:true,
-        num: 0
-      },
+      // },
+      // {
+      //   id: "33336499",
+      //   name: "456789",
+      //   picture:
+      //     "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
+      //   signature:'222',
+      //   highlighted: false,
+      //   msg_type:2,
+      //   status1: true,
+      //   status2:true,
+      //   status3:true,
+      //   num: 0
+      // },
+      // {
+      //   id: "987456",
+      //   name: "任隽延",
+      //   picture:
+      //     "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
+      //   signature:'333',
+      //   highlighted: false,
+      //   msg_type:3,
+      //   status1: true,
+      //   status2:true,
+      //   status3:true,
+      //   num: 0
+      // },
     ],
     user_list: [
       {
@@ -72,17 +72,6 @@ const store = new Vuex.Store({
         picture:
           "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
         signature:'222',
-        highlighted: false,
-        num: 0
-      },
-      {
-        id: "987456",
-        name: "任隽延",
-        new_msg: "中午好",
-        time: "2023-05-21T14:20:00",
-        picture:
-          "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
-        signature:'333',
         highlighted: false,
         num: 0
       },
@@ -119,6 +108,9 @@ const store = new Vuex.Store({
 
   },
   mutations: {
+    updateContactList(state,contactList){
+      state.contactor_list=contactList
+    },
     inspectMsg(state, userId) {
       const targetObj = state.user_list.find(obj => obj.id === userId)
       var t = targetObj.num

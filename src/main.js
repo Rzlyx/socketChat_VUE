@@ -57,15 +57,24 @@ new Vue({
   store,
   render: h => h(App),
   created() {
-    this.$root.$on('loginSuccess', () => {
+    window.sessionStorage.removeItem("token");
+    // 登录成功的事件
+    this.$root.$on('loginSuccess', async () => {
+      const id = window.sessionStorage.getItem("userid");
+      const { data: res } = await this.$http.post("http://127.0.0.1:8070/queryFriendList", { user_id: parseInt(id, 10) });
+      this.$store.commit('updateContactList', res.data.friend_list.friends);
       tryReconnectWebSocket();
     });
 
     tryReconnectWebSocket();
   },
   beforeDestroy() {
+
+
+    // 当页面刷新时，重新建立连接
     if (socket && socket.readyState === WebSocket.OPEN) {
       socket.close();
     }
   },
+  
 }).$mount('#app');

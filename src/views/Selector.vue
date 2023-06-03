@@ -119,10 +119,16 @@ export default {
       console.log(key, keyPath);
     },
     goto_msg_user() {
-      this.$router.push('/msg_user')
+      if(this.$route.path==="/msg_user"){
+        return
+      }
+      this.$router.replace('/msg_user')
     },
     goto_contactor() {
-      this.$router.push('/contactor')
+      if(this.$route.path==="/contactor"){
+        return
+      }
+      this.$router.replace('/contactor')
     },
     GotoPersonalInfo(){
       this.$router.push('/infomation')
