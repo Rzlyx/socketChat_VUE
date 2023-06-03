@@ -6,7 +6,7 @@
           <el-image :src="url" @click="GotoPersonalInfo()"></el-image>
           <div>
            
-            <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" >
+            <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
 
 
               <el-menu-item :index=url1 @click="goto_msg_user">
@@ -113,6 +113,9 @@ export default {
   },
   methods: {
     handleOpen(key, keyPath) {
+      console.log(key, keyPath);
+    },
+    handleClose(key, keyPath) {
       console.log(key, keyPath);
     },
     goto_msg_user() {
