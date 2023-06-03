@@ -13,7 +13,6 @@
             </div>
 
 
-
             <div class="flex1">
                 <div class="user_list">
                     <div v-for="(user, index) in this.List" :key="user.friend_id"
@@ -37,7 +36,7 @@
             <div class="block1">
                 <div class="lable" @click="$router.push('/addGroup')">
                     <div>
-                        <img :src="avator" alt="新的朋友">
+                        <img :src="avator" alt="新的">
                     </div>
                     <div>
                         <p>新的群聊</p>

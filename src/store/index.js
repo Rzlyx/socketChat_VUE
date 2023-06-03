@@ -103,6 +103,13 @@ const store = new Vuex.Store({
         status3:true,
         num: 0,
       }
+    ],
+    my_friends_list: [
+      {
+        friendship_id: '13746435',
+        friend_id: '1575346457',
+        name: '小明'
+      }
     ]
 
 
