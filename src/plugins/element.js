@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import 'element-ui/lib/theme-chalk/index.css'
 import { Button,Container,Main,Footer,Form,FormItem,Input,Message,Menu,MenuItem,RadioGroup,RadioButton,
-Submenu,MenuItemGroup,Image,Switch,Badge,Table,TableColumn,Divider,Aside,Avatar,Tooltip,Row,Col,Card,Tag,Select,Option} from 'element-ui'
+Submenu,MenuItemGroup,Image,Switch,Badge,Table,TableColumn,Divider,Aside,Avatar,Tooltip,Row,Col,Card,Tag,Select,Option,Dialog} from 'element-ui'
 import Vuelidate from 'vuelidate'
 import vueChatScroll from 'vue-chat-scroll'
 
@@ -35,3 +35,5 @@ Vue.use(Tooltip)
 Vue.use(Tag)
 Vue.use(Select)
 Vue.use(Option)
+Vue.use(Dialog)
+
