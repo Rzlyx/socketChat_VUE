@@ -177,7 +177,7 @@ export default {
 }
 </script>
 
-<style scope>
+<style scoped>
 .content {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
