@@ -34,12 +34,12 @@ const routes = [
       { path: '/contactor', component: Contactor }
     ]
   },
-  { path: '/infomation', component: Infomation},
-  { path: '/addFrind', component: AddFrind},
-  { path: '/addGroup', component: AddGroup}
+  { path: '/infomation', component: Infomation },
+  { path: '/addFrind', component: AddFrind },
+  { path: '/addGroup', component: AddGroup }
 ]
 
-const router = new VueRouter({ 
+const router = new VueRouter({
   routes
 })
 

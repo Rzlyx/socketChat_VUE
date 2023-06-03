@@ -45,27 +45,66 @@ export default {
         };
     },
     methods: {
+        //保存密码
+        saveCredentials(username, password) {
+            const credentials = {
+                username: username,
+                password: password
+            };
+            const encryptedCredentials = btoa(JSON.stringify(credentials));
+            localStorage.setItem("credentials", encryptedCredentials);
+        },
+        retrieveCredentials() {
+            const encryptedCredentials = localStorage.getItem("credentials");
+            if (encryptedCredentials) {
+                const credentials = JSON.parse(atob(encryptedCredentials));
+                return credentials;
+            }
+            return null;
+        },
         login() {
             this.$refs.form.validate(async valid => {
                 if (!valid) return;
-                const { data: res } = await this.$http.post('http://192.168.1.222:8070/login', this.form);
+                const { data: res } = await this.$http.post('http://127.0.0.1:8070/login', this.form);
                 if (res.code !== 1000) return this.$message.error('登录失败');
                 window.sessionStorage.setItem("token", res.data.token);
                 window.sessionStorage.setItem("userid", res.data.id);
+                this.saveCredentials(this.form.username, this.form.password);
                 this.$message.success("登录成功")
                 this.$root.$emit('loginSuccess'); // 触发自定义事件 'loginSuccess'
-                this.$router.push('/selector');
+                this.$router.replace('/selector');
 
 
             });
         },
+        async auto_login() {
+            const { data: res } = await this.$http.post('http://127.0.0.1:8070/login', this.form);
+            if (res.code !== 1000) return this.$message.error('自动登录失败');
+            window.sessionStorage.setItem("token", res.data.token);
+            window.sessionStorage.setItem("userid", res.data.id);
+            this.saveCredentials(this.form.username, this.form.password);
+            this.$message.success("自动登录成功")
+            this.$root.$emit('loginSuccess'); // 触发自定义事件 'loginSuccess'
+        },
         register() {
             this.$router.push('/register');
         },
-       
+
     },
     mounted() {
-        
+
+    },
+    created() {
+        const info = this.retrieveCredentials();
+        if (info) {
+            this.form.username = info.username;
+            this.form.password = info.password;
+
+            this.$nextTick(async () => {
+                await this.auto_login();
+                this.$router.replace('/selector');
+            });
+        }
     }
 };
 </script>

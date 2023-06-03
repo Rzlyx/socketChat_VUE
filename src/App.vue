@@ -6,8 +6,14 @@
 
 <script>
 export default {
-  name: 'app',
-  components: {
+  name: 'App',
+  created() {
+    const token = window.sessionStorage.getItem('token');
+    if (token) {
+      this.$router.replace('/selector');
+    } else {
+      this.$router.replace('/login1');
+    }
   }
 }
 </script>
