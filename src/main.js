@@ -14,7 +14,7 @@ Vue.prototype.$message = Message;
 let socket = null; // 全局 WebSocket 连接
 
 function createWebSocket(token2) {
-  socket = new WebSocket('ws://192.168.1.181:8080/ws/' + token2);
+  socket = new WebSocket('ws://127.0.0.1:8070/ws/' + token2);
 
   socket.onopen = function () {
     console.log("连接成功")
@@ -61,7 +61,7 @@ new Vue({
     // 登录成功的事件
     this.$root.$on('loginSuccess', async () => {
       const id = window.sessionStorage.getItem("userid");
-      const { data: res } = await this.$http.post("http://127.0.0.1:8070/queryFriendList", { user_id: parseInt(id, 10) });
+      const { data: res } = await this.$http.post("http://127.0.0.1:8070/queryFriendList", { user_id: id });
       this.$store.commit('updateContactList', res.data.friend_list.friends);
       tryReconnectWebSocket();
     });

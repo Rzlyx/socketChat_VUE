@@ -66,15 +66,6 @@ export default {
   },
   data() {
     return {
-      msg: {
-        id: "",
-        content: "", // 消息内容
-        time: "",
-        send_id: "",
-        receive_id: "",
-        type: "", // 消息类型，例如 'image'
-        imageSrc: "" // 图片消息的 URL
-      },
       user: {
         id: '',
         username: '123456',
@@ -90,21 +81,6 @@ export default {
       otheravatar: '',
       userId: '',
       contactorId: '',
-      send_message: {
-        id: "",
-        content: "", // 消息内容
-        time: "", // 消息时间
-        send_id: "",
-        receive_id: "",
-        type: "", // 消息类型，例如 'image'
-        imageSrc: "" // 图片消息的 URL
-        // id: '',
-        // context: ' ',
-        // time: '',
-        // send_id: '',
-        // receive_id: '',
-        // type: '1',
-      }
     };
   },
   methods: {

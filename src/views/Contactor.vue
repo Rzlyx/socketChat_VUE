@@ -227,8 +227,12 @@ export default {
     methods: {
         async get_contactor_list() {
             const id = window.sessionStorage.getItem("userid")
+            console.log(id)
             const { data: res } = await this.$http.post("http://127.0.0.1:8070/queryFriendList", { user_id: parseInt(id, 10) });
-            this.$store.commit('updateContactList', res.data.friend_list.friends);
+            setTimeout(() => {
+                console.log(res);
+            }, 200);
+            //this.$store.commit('updateContactList', res.data.friend_list.friends);
         },
         choose_msg_type(type) {
             if (type == 1) {
@@ -249,9 +253,7 @@ export default {
                 "user_id": Number(userId),
                 "friend_id": Number(info.friend_id)
             }
-            setTimeout(() => {
-                console.log(Number("2172620156973350912"),info.friendship_id);
-            }, 200);
+            
             const { data: res } = await this.$http.post("http://127.0.0.1:8070/queryFriendInfo", form)
             setTimeout(() => {
                 console.log(res);
@@ -301,7 +303,7 @@ export default {
         }
     },
     created() {
-
+       // this.get_contactor_list()
         this.List = this.$store.state.contactor_list
         this.my_group_list = this.$store.state.my_group_list
     }
