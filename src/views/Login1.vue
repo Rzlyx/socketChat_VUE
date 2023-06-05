@@ -65,7 +65,7 @@ export default {
         login() {
             this.$refs.form.validate(async valid => {
                 if (!valid) return;
-                const { data: res } = await this.$http.post('http://127.0.0.1:8070/login', this.form);
+                const { data: res } = await this.$http.post('http://192.168.1.208:8070/login', this.form);
                 if (res.code !== 1000) return this.$message.error('登录失败');
                 window.sessionStorage.setItem("token", res.data.token);
                 window.sessionStorage.setItem("userid", res.data.id);
@@ -78,13 +78,15 @@ export default {
             });
         },
         async auto_login() {
-            const { data: res } = await this.$http.post('http://127.0.0.1:8070/login', this.form);
-            if (res.code !== 1000) return this.$message.error('自动登录失败');
+            const { data: res } = await this.$http.post('http://192.168.1.208:8070/login', this.form);
+            if (res.code !== 1000) return "false"
+
             window.sessionStorage.setItem("token", res.data.token);
             window.sessionStorage.setItem("userid", res.data.id);
             this.saveCredentials(this.form.username, this.form.password);
-            this.$message.success("自动登录成功")
+            
             this.$root.$emit('loginSuccess'); // 触发自定义事件 'loginSuccess'
+            return
         },
         register() {
             this.$router.push('/register');
@@ -101,8 +103,16 @@ export default {
             this.form.password = info.password;
 
             this.$nextTick(async () => {
-                await this.auto_login();
-                this.$router.replace('/selector');
+                var res = await this.auto_login();
+                if (res === "false") {
+                    this.$message.error('自动登录失败');
+                }
+                else {
+                    this.$message.success("自动登录成功")
+                    this.$router.replace('/selector');
+                }
+
+
             });
         }
     }

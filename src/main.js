@@ -14,7 +14,7 @@ Vue.prototype.$message = Message;
 let socket = null; // 全局 WebSocket 连接
 
 function createWebSocket(token2) {
-  socket = new WebSocket('ws://192.168.1.222:8080/ws/' + token2);
+  socket = new WebSocket('ws://192.168.1.208:8070/ws/' + token2);
 
   socket.onopen = function () {
     console.log("连接成功")
@@ -58,12 +58,21 @@ new Vue({
   render: h => h(App),
   created() {
     window.sessionStorage.removeItem("token");
-    // 登录成功的事件
+
     this.$root.$on('loginSuccess', async () => {
-      const id = window.sessionStorage.getItem("userid");
-      const { data: res } = await this.$http.post("http://127.0.0.1:8070/queryFriendList", { user_id: parseInt(id, 10) });
-      this.$store.commit('updateContactList', res.data.friend_list.friends);
       tryReconnectWebSocket();
+      const id = window.sessionStorage.getItem("userid");
+      const { data: res } = await this.$http.post("http://192.168.1.208:8070/queryFriendList", { user_id: id });
+      this.$store.commit('updateContactList', res.data.friend_list.friends);
+
+      const { data: res2 } = await this.$http.post('http://192.168.1.208:8070/queryContactorList', {user_id:id});
+      setTimeout(() => {
+        console.log(res2.data.contactor_list.contactor_list);
+    }, 200);
+      this.$store.commit('get_msg_user',res2.data.contactor_list.contactor_list)
+      
+
+      
     });
 
     tryReconnectWebSocket();
