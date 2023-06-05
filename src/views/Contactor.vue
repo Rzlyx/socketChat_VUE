@@ -65,7 +65,7 @@
 
         </div>
         <div class="main">
-            <div class="default_picture" v-if="Isclick === false && Isclick2 === false">
+            <div class="default_picture" v-if="Isclick === false && Isclick2 === false && Isclick5 === false">
                 <div class="center">
                     <i class="el-icon-chat-dot-square"></i>
                 </div>
@@ -175,6 +175,42 @@
                     </el-col>
                 </el-row>
             </div>
+            <div v-if="Isclick5">
+                <el-table
+                    :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+                    style="width: 100%">
+                    <el-table-column label="Date" prop="date">
+                    </el-table-column>
+                    <el-table-column label="身份">
+                        <template slot-scope="scope">
+                            <el-tag :type="get_identify(scope.row.identity).status">{{ get_identify(scope.row.identity).name
+                            }}</el-tag>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="Name" prop="name">
+                    </el-table-column>
+                    <el-table-column label="禁言状态">
+                        <template slot-scope="scope">
+                            <el-switch v-if="scope.row.identity!=2" v-model="scope.row.status" active-color="#13ce66" inactive-color="#ff4949" :disabled="!(group_identify>scope.row.identity&&group_identify>=1)">
+                            </el-switch>
+                        </template>
+                    </el-table-column>
+                    <el-table-column align="right" label="管理">
+
+                        <template slot-scope="scope">
+                            <el-tooltip class="item" effect="dark" content="转让群" placement="top">
+                                <el-button v-if="scope.row.identity!=2" size="mini" type="warning" :disabled="(group_identify!=2)"
+                                    icon="el-icon-upload2"></el-button>
+                            </el-tooltip>
+                            <el-tooltip class="item" effect="dark" content="设为管理" placement="top">
+                                <el-button v-if="scope.row.identity!=2" size="mini" type="success" :disabled="(group_identify!=2)"
+                                    icon="el-icon-upload2"></el-button>
+                            </el-tooltip>
+                            <el-button size="mini" v-if="scope.row.identity!=2" type="danger" :disabled="!(group_identify>scope.row.identity&&group_identify>=1)">踢出群</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
         </div>
 
     </div>
@@ -186,6 +222,50 @@
 export default {
     data() {
         return {
+            group_identify:2,
+            tableData: [{
+                date: '2016-05-02',
+                identity: 2,
+                name: '王小虎',
+                status: true,
+                address: '上海市普陀区金沙江路 1518 弄'
+            }, {
+                date: '2016-05-02',
+                identity: 1,
+                name: '王小虎',
+                status: true,
+                address: '上海市普陀区金沙江路 1518 弄'
+            }, {
+                date: '2016-05-02',
+                identity: 0,
+                name: '王小虎',
+                status: true,
+                address: '上海市普陀区金沙江路 1518 弄'
+            }, {
+                date: '2016-05-02',
+                identity: 0,
+                name: '王小虎',
+                status: true,
+                address: '上海市普陀区金沙江路 1518 弄'
+            }, {
+                date: '2016-05-02',
+                identity: 0,
+                name: '王小虎',
+                status: true,
+                address: '上海市普陀区金沙江路 1518 弄'
+            }, {
+                date: '2016-05-02',
+                identity: 0,
+                name: '王小虎',
+                status: true,
+                address: '上海市普陀区金沙江路 1518 弄'
+            }, {
+                date: '2016-05-02',
+                identity: 0,
+                name: '王小虎',
+                status: true,
+                address: '上海市普陀区金沙江路 1518 弄'
+            },],
             status1: true,
             status2: true,
             status3: true,
@@ -212,6 +292,7 @@ export default {
             avator: 'https://img1.baidu.com/it/u=1582149699,3121859091&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=501',
             Isclick: false,
             Isclick2: false,
+            Isclick5: true,
             info: {},
             form: {},
             groupInfo: {},
@@ -225,6 +306,15 @@ export default {
         }
     },
     methods: {
+        get_identify(num) {
+            if (num == 2) {
+                return { name: "群主", status: "warning" }
+            } else if (num == 0) {
+                return { name: "成员", status: "info" }
+            } else if (num == 1) {
+                return { name: "管理", status: "success" }
+            }
+        },
         async get_contactor_list() {
             const id = window.sessionStorage.getItem("userid")
             console.log(id)
@@ -248,12 +338,12 @@ export default {
             this.ClearData()
             window.sessionStorage.setItem("contactor_id", userId)
             const info = this.List.find(item => item.friend_id === userId)
-            const form={
-                "friendship_id": Number(info.friendship_id,10),
+            const form = {
+                "friendship_id": Number(info.friendship_id, 10),
                 "user_id": Number(userId),
                 "friend_id": Number(info.friend_id)
             }
-            
+
             const { data: res } = await this.$http.post("http://192.168.1.208:8070/queryFriendInfo", form)
             setTimeout(() => {
                 console.log(res);
@@ -303,7 +393,7 @@ export default {
         }
     },
     created() {
-       // this.get_contactor_list()
+        // this.get_contactor_list()
         this.List = this.$store.state.contactor_list
         this.my_group_list = this.$store.state.my_group_list
     }
