@@ -6,7 +6,7 @@
           <el-image :src="url" @click="GotoPersonalInfo()"></el-image>
           <div>
            
-            <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
+            <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
 
 
               <el-menu-item :index=url1 @click="goto_msg_user">
@@ -97,6 +97,7 @@
 export default {
   data() {
     return {
+      isCollapse:true,
       url1: "msg_user",
       url2: "userlist",
       // 未读消息个数

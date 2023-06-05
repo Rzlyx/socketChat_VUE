@@ -228,7 +228,7 @@ export default {
         async get_contactor_list() {
             const id = window.sessionStorage.getItem("userid")
             console.log(id)
-            const { data: res } = await this.$http.post("http://127.0.0.1:8070/queryFriendList", { user_id: parseInt(id, 10) });
+            const { data: res } = await this.$http.post("http://192.168.1.208:8070/queryFriendList", { user_id: parseInt(id, 10) });
             setTimeout(() => {
                 console.log(res);
             }, 200);
@@ -254,7 +254,7 @@ export default {
                 "friend_id": Number(info.friend_id)
             }
             
-            const { data: res } = await this.$http.post("http://127.0.0.1:8070/queryFriendInfo", form)
+            const { data: res } = await this.$http.post("http://192.168.1.208:8070/queryFriendInfo", form)
             setTimeout(() => {
                 console.log(res);
             }, 200);
