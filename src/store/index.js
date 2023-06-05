@@ -118,6 +118,9 @@ const store = new Vuex.Store({
     updateContactList(state,contactList){
       state.contactor_list=contactList
     },
+    updateGList(state,listG){
+      state.my_group_list = listG
+    },
     inspectMsg(state, userId) {
       const targetObj = state.user_list.find(obj => obj.id === userId)
       var t = targetObj.num

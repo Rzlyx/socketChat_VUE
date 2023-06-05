@@ -74,14 +74,17 @@
                     <el-col>
                         <el-card :body-style="{ padding: '0px' }">
                             <div class="briefintro">
-                                <div>
+                                <div class="img">
                                     <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
                                         class="image">
                                 </div>
-                                <div class="info">
-                                    昵称：{{ this.info.name }}
-                                    <br>
-                                    邮信号：{{ this.info.signature }}
+                                <div class="info" v-if="info != {}">
+                                    <div class="item item1">昵称：{{ info.user_name }}</div>
+                                    <div class="item"></div>
+                                    <div class="item item2">账号：{{ info.user_id }}</div>
+                                    <div class="item item3">电话：{{ info.phone_number }}</div>
+                                    <div class="item item4">邮件：{{ info.e_mail }}</div>
+                                    <div class="item item5" v-if="info.sex != 999">性别：{{ info.sex }}</div>
                                 </div>
 
                             </div>
@@ -95,31 +98,37 @@
                                             </el-tooltip>
                                         </div>
                                     </el-form-item>
-                                    <el-form-item label="标签">
-                                        <el-tag type="success">同学</el-tag>&nbsp;&nbsp;<el-tag type="info">好友</el-tag>
-                                    </el-form-item>
                                     <el-form-item label="消息">
                                         <el-select v-model="select_value"
-                                            :placeholder="choose_msg_type(this.info.msg_type)">
+                                            :placeholder="choose_msg_type(this.info.is_private_chat_gray)">
                                             <el-option v-for="item in options" :key="item.value" :label="item.label"
                                                 :value="item.value" :disabled="item.disabled">
                                             </el-option>
                                         </el-select>
                                     </el-form-item>
+                                    <el-form-item label="标签">
+                                        <el-tag type="success">{{form.tags}}</el-tag>
+                                    </el-form-item>
+                                    <el-form-item label="签名">
+                                        <el-tag type="info">{{ form.signature }}</el-tag>
+                                    </el-form-item>
+                                    <el-form-item label="状态">
+                                        <el-tag type="info">{{ getStatusText }}</el-tag>
+                                    </el-form-item>
+
                                 </el-form>
                             </div>
                             <div class="limits">
-                                <el-switch style="display: block ;margin-left: 41px;" v-model="status1"
-                                    inactive-text="仅聊天"></el-switch>
-                                <el-switch style="display: block ;margin-left: 41px;" v-model="status2"
-                                    inactive-text="不让他看朋友圈"></el-switch>
-                                <el-switch style="display: block ;margin-left: 41px;" v-model="status3"
+                                <el-switch style="display: block ;margin-left: 40px;" v-model="status1"
                                     inactive-text="不看他朋友圈"></el-switch>
+                                <el-switch style="display: block ;margin-left: 40px;" v-model="status2"
+                                    inactive-text="拉黑"></el-switch>
                             </div>
                             <div style="padding: 14px;">
                                 <div class="bottom_div clearfix">
                                     <el-button type="primary" size="small" @click="JumpChat()">文字聊天</el-button>
                                     <el-button type="primary" size="small">视频聊天</el-button>
+                                    <el-button type="danger" size="small">删除好友</el-button>
                                 </div>
                             </div>
                         </el-card>
@@ -131,14 +140,17 @@
                     <el-col>
                         <el-card :body-style="{ padding: '0px' }">
                             <div class="briefintro">
-                                <div>
+                                <div class="img">
                                     <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
                                         class="image">
                                 </div>
                                 <div class="info">
-                                    昵称：{{ this.groupInfo.group_name }}
-                                    <br>
-                                    邮信号：{{ this.groupInfo.signature }}
+                                    <div class="item">{{ groupInfo.group_name }}</div>
+                                    <div class="item"></div>
+                                    <div class="item">{{ groupInfo.group_id }}</div>
+                                    <div class="item"></div>
+                                    <div class="item">{{ groupInfo.create_time }}</div>
+
                                 </div>
 
                             </div>
@@ -152,22 +164,28 @@
                                             </el-tooltip>
                                         </div>
                                     </el-form-item>
-                                    <el-form-item label="标签">
-                                        <el-tag type="success">我加入的群</el-tag>&nbsp;&nbsp;<el-tag type="info">我管理的群</el-tag>
-                                    </el-form-item>
                                     <el-form-item label="消息">
-                                        <el-select v-model="select_value"
+                                        <el-select v-model="select_value2"
                                             :placeholder="choose_msg_type(this.groupInfo.msg_type)">
-                                            <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                            <el-option v-for="item in options2" :key="item.value" :label="item.label"
                                                 :value="item.value" :disabled="item.disabled">
                                             </el-option>
                                         </el-select>
                                     </el-form-item>
+                                    <el-form-item label="公告">
+                                        <el-tag type="info">{{ groupInfo.description }}</el-tag>
+                                    </el-form-item>
+                                    <el-form-item label="标签">
+                                        <el-tag type="success">我加入的群</el-tag>&nbsp;&nbsp;<el-tag type="info">我管理的群</el-tag>
+                                    </el-form-item>
+
                                 </el-form>
                             </div>
                             <div style="padding: 14px;">
                                 <div class="bottom_div clearfix">
                                     <el-button type="primary" size="small" @click="JumpChat()">文字聊天</el-button>
+                                    <el-button type="primary" size="small">群成员管理</el-button>
+                                    <el-button type="danger" size="small">退出群聊</el-button>
                                 </div>
                             </div>
                         </el-card>
@@ -185,24 +203,37 @@
 export default {
     data() {
         return {
-            status1: true,
-            status2: true,
-            status3: true,
+            status1: false,
+            status2: false,
             select_value: '',
+            select_value2: '',
             options: [{
                 value: '选项1',
-                label: '接收消息并展示',
+                label: '接收消息并提醒',
                 disabled: false
 
             }, {
                 value: '选项2',
-                label: '接收但是不展示',
+                label: '接收但是不提醒',
                 disabled: false
-            }, {
-                value: '选项3',
-                label: '不接受消息',
-                disabled: false
-            },],
+            }],
+            options2: [
+                {
+                    value: '选项1',
+                    label: '接收消息并提醒',
+                    disabled: false
+                },
+                {
+                    value: '选项2',
+                    label: '接收但是不提醒',
+                    disabled: false
+                },
+                {
+                    value: '选项3',
+                    label: '屏蔽该群',
+                    disabled: false
+                }
+            ],
             List: [
             ],
             my_group_list: [
@@ -211,8 +242,13 @@ export default {
             avator: 'https://img1.baidu.com/it/u=1582149699,3121859091&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=501',
             Isclick: false,
             Isclick2: false,
-            info: {},
-            form: {},
+            info: {},//存放点击好友获得的信息
+            form: {
+                notes: '',
+                signature: '',
+                tags: [],
+                status: 0
+            },//存放好友信息的备注
             groupInfo: {},
             highlightedUserId: '',
             index1: '',
@@ -229,54 +265,77 @@ export default {
             const { data: res } = await this.$http.post("http://127.0.0.1:8070/queryFriendList", { user_id: parseInt(id, 10) });
             this.$store.commit('updateContactList', res.data.friend_list.friends);
         },
-        choose_msg_type(type) {
-            if (type == 1) {
-                return "接收消息并展示"
-            } else if (type == 2) {
-                return "接收但是不展示"
-            } else {
-                return "不接受消息"
+        choose_msg_type(type) {//消息通知框内显示内容变化
+            if (type == false || type == 6) {
+                return "接收消息并提醒"
+            } else if (type == true || type == 7) {
+                return "接收但是不提醒"
+            } else if (type == 8) {
+                return "不接收消息"
             }
         },
-        async toggleHighlight(userId) {
+        async toggleHighlight(userId) {//高亮显示好友，点击获取好友详细信息，消息通知下拉内容已选项禁用，切换main内容卡片
             this.highlightedUserId = this.highlightedUserId === userId ? '' : userId;
             this.ClearData()
             window.sessionStorage.setItem("contactor_id", userId)
             const info = this.List.find(item => item.friend_id === userId)
-            const form={
-                "friendship_id": Number(info.friendship_id,10),
-                "user_id": Number(userId),
-                "friend_id": Number(info.friend_id)
+            const form = {
+                "user_id": window.sessionStorage.getItem("userid"),
+                "friend_id": info.friend_id
             }
-            setTimeout(() => {
-                console.log(Number("2172620156973350912"),info.friendship_id);
-            }, 200);
-            const { data: res } = await this.$http.post("http://127.0.0.1:8070/queryFriendInfo", form)
-            setTimeout(() => {
-                console.log(res);
-            }, 200);
-
+            await this.$http.post('http://192.168.2.172:8070/queryFriendInfo', form).then(response => {
+                this.info = response.data.data.friend_info
+                this.form.notes = response.data.data.friend_info.remark
+                this.form.signature = response.data.data.friend_info.signature === '' ? '无' : response.data.data.friend_info.signature
+                this.form.status = response.data.data.friend_info.status
+                this.form.tags = response.data.data.friend_info.tags === null ? '无' : response.data.data.friend_info.tags
+                console.log(this.info)
+            }).catch(error => {
+                console.log(error)
+                return this.$message.error('网络错误');
+            })
+            if (this.info.is_private_chat_gray == true) {
+                this.options[0].disabled = false
+                this.options[1].disabled = true
+            } else if (this.info.is_private_chat_gray == false) {
+                this.options[0].disabled = true
+                this.options[1].disabled = false
+            }
+            // setTimeout(() => {
+            //     console.log(res.data);
+            // }, 200);
             this.Isclick2 = false
             this.Isclick = true
         },
 
-        MouseClick(id) {
-            this.groupInfo = this.my_group_list.find(item => item.group_id === id)
-            if (this.info.msg_type == 1) {
-                this.options[0].disabled = true
-                this.options[1].disabled = false
-                this.options[2].disabled = false
-            } else if (this.info.msg_type == 2) {
-                this.options[0].disabled = false
-                this.options[1].disabled = true
-                this.options[2].disabled = false
+        async MouseClick(id) {//点击获取群聊详细信息，消息通知下拉内容已选项禁用，切换main内容卡片
+            // this.groupInfo = this.my_group_list.find(item => item.group_id === id)
+
+
+            await this.$http.post('http://192.168.2.172:8070/QueryGroupInfo', { group_id: id, user_id: window.sessionStorage.getItem("userid") }).then(response => {
+                this.groupInfo = response.data.data
+                console.log(this.groupInfo)
+            }).catch(error => {
+                console.log(error)
+                return this.$message.error('网络错误');
+            })
+            if (this.groupInfo.msg_type == 6) {
+                this.options2[0].disabled = true
+                this.options2[1].disabled = false
+                this.options2[2].disabled = false
+            } else if (this.info.msg_type == 7) {
+                this.options2[0].disabled = false
+                this.options2[1].disabled = true
+                this.options2[2].disabled = false
             } else {
-                this.options[0].disabled = false
-                this.options[1].disabled = false
-                this.options[2].disabled = true
-            }
+                this.options2[0].disabled = false
+                this.options2[1].disabled = false
+                this.options2[2].disabled = true
+            } true
             this.Isclick = false
             this.Isclick2 = true
+            const { data: res } = await this.$http.post("http://192.168.2.172:8070/QueryGroupInfo", { group_id: id })
+            this.groupInfo = res.data
         },
         JumpChat() {
             this.index1 = window.sessionStorage.getItem("msg")
@@ -303,11 +362,37 @@ export default {
 
         this.List = this.$store.state.contactor_list
         this.my_group_list = this.$store.state.my_group_list
+    },
+    computed: {
+        getStatusText() {
+            switch (this.form.status) {
+                case 0:
+                    return '离线';
+                case 1:
+                    return '在线';
+                case 2:
+                    return '潜水';
+                default:
+                    return '';
+            }
+        },
     }
 }
 </script>
 
 <style scoped>
+.img {
+    width: 130px;
+}
+
+.info {
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* grid-template-rows: repeat(3, 1fr); */
+    grid-gap: 10px;
+}
+
 .input-container {
     display: flex;
     align-items: center;
@@ -320,6 +405,11 @@ export default {
 .user-info {
     margin-left: 6px;
 }
+
+.group-info {
+    margin-left: 6px;
+}
+
 
 .group-container2 {
     display: flex;
@@ -362,7 +452,7 @@ export default {
 
 .main {
     flex: 1;
-    background-color: #DEE1E6;
+    background-color: #e8e5e5;
 }
 
 .container {
@@ -490,12 +580,14 @@ export default {
 
 .briefintro {
     display: flex;
+    margin-top: 3%;
+    margin-bottom: 3%;
 }
 
 .image {
     margin-top: 5px;
     margin-left: 10px;
-    width: 20%;
+    width: 60%;
     display: block;
     border-radius: 10%;
 }
