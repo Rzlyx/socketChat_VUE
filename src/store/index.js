@@ -9,6 +9,7 @@ const store = new Vuex.Store({
     MsgSum: 0,
     Contactor: 0,
     moments: 0,
+    comment: 0,
     message: {
     },
     contactor_list: [
@@ -42,7 +43,128 @@ const store = new Vuex.Store({
         status3: true,
         num: 0,
       }
-    ]
+    ],
+    my_friends_list: [
+      {
+        friendship_id: '13746435',
+        friend_id: '1575346457',
+        name: '小明'
+      }
+    ],
+    //动态列表
+    moment_list: [
+      {
+        id: "21690096",
+        name: "123456",
+        avator:
+          'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+        new_msg: "今天天气好好呀！",
+        time: "2023-05-22T08:15:00",
+        picture: [
+          'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
+          'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+          'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+          // 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+          // 'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+          // 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
+        ],
+
+        likes: [
+          // {
+          //   id: '12966',
+          //   name: '小明'
+          // },
+          // {
+          //   id: '43805',
+          //   name: '小红'
+          // }
+        ],
+        comments: [
+          {
+            id: '29664',
+            name: '小刚',
+            content: '确实不错！'
+          },
+          {
+            id: '12345',
+            name: '小利',
+            content: '嗯，天气真好！'
+          },
+        ]
+      },
+      {
+        id: "21696499",
+        name: "456789",
+        avator:
+          'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+        new_msg: "早上好",
+        time: "2023-05-23T09:45:00",
+        picture: [
+          'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
+          'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+          'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+          'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+          'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+          'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
+          'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+          'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+          'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
+        ],
+
+        likes: [
+          {
+            id: '12966',
+            name: '小明'
+          },
+          {
+            id: '43805',
+            name: '小红'
+          }
+        ],
+        comments: [
+          {
+            id: '29664',
+            name: '小刚',
+            content: '确实不错！'
+          }
+        ]
+      },
+      {
+        id: "987456",
+        name: "任隽延",
+        avator:
+          'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+        new_msg: "中午好",
+        time: "2023-05-21T14:20:00",
+        picture: [
+          'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
+          'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+          'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+          'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+          'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+          'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
+        ],
+
+        likes: [
+          {
+            id: '12966',
+            name: '小明'
+          },
+          {
+            id: '43805',
+            name: '小红'
+          }
+        ],
+        comments: [
+          {
+            id: '29664',
+            name: '小刚',
+            content: '确实不错！'
+          }
+        ]
+      },
+
+    ],
 
 
   },
@@ -64,9 +186,28 @@ const store = new Vuex.Store({
         });
       }else{
         return
-      }
+      }},
       
 
+    momentLikes(state, like_info) {
+      const target_moment = state.moment_list[like_info.index]// 第一步：根据传入的 index 取出目标动态对象
+      const existing_like = target_moment.likes.find(like => like.id === like_info.id)// 第二步：判断用户是否重复点赞了该动态
+      if (existing_like) {// 第三步：如果是重复点赞，则取消点赞
+        target_moment.likes = target_moment.likes.filter(like => like.id !== like_info.id)
+      }
+      else { // 第四步：如果是新的点赞，则将点赞对象添加到列表中
+        target_moment.likes.push({
+          id: like_info.id,
+          name: like_info.name
+        })
+      }
+    },
+    momentComments(state, comment_info) {
+      state.moment_list[comment_info.index].comments.push({
+        id: comment_info.id,
+        name: comment_info.name,
+        content: comment_info.content,
+      })
     },
     updateContactList(state, contactList) {
       state.contactor_list = contactList
