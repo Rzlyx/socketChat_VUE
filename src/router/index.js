@@ -4,6 +4,10 @@ import Login1 from '../views/Login1.vue'
 import Register from '../views/Register.vue'
 import Selector from '../views/Selector.vue'
 import MsgUser from '../views/MsgUser.vue'
+import Moment from'../views/Moment.vue'
+import MomentItem from '../views/MomentItem.vue'
+import Comment from '../views/Comment.vue'
+import Collection from '../views/Collection.vue'
 import Contactor from '../views/Contactor.vue'
 import ChatMsg1 from '../views/ChatMsg1.vue'
 import ChatMsg2 from '../views/ChatMsg2.vue'
@@ -31,7 +35,16 @@ const routes = [
           { path: "/video_chat", component: VideoChat }
         ]
       },
-      { path: '/contactor', component: Contactor }
+      { path: '/contactor', component: Contactor },
+      { 
+        path: '/moment', 
+        component: Moment,
+        children: [
+          {path: "/momentitem",component:MomentItem},
+          {path: "/comment",component:Comment},
+        ]
+      },
+      { path: '/collection', component: Collection },
     ]
   },
   { path: '/infomation', component: Infomation },
