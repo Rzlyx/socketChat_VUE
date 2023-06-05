@@ -73,23 +73,23 @@ export default {
       }
       this.isVideoOn = !this.isVideoOn;
     },
-    createPeerConnection() {
-      // 创建RTCPeerConnection对象并设置相关事件处理程序
-      this.peerConnection = new RTCPeerConnection();
-      // ...
+    // createPeerConnection() {
+    //   // 创建RTCPeerConnection对象并设置相关事件处理程序
+    //   this.peerConnection = new RTCPeerConnection();
+    //   // ...
 
-      // 建立WebSocket连接
-      this.socket = new WebSocket('ws://192.168.1.208:8080/ws/'+"123456987");
-      this.socket.onopen = () => {
-        console.log('WebSocket connection opened');
-      };
-      this.socket.onmessage = (event) => {
-        this.handleVideoData(event.data); // 处理从后端接收到的视频流数据
-      };
-      // this.socket.onclose = () => {
-      //   console.log('WebSocket connection closed');
-      // };
-    },
+    //   // 建立WebSocket连接
+    //   this.socket = new WebSocket('ws://127.0.0.1:8080/ws/'+"123456987");
+    //   this.socket.onopen = () => {
+    //     console.log('WebSocket connection opened');
+    //   };
+    //   this.socket.onmessage = (event) => {
+    //     this.handleVideoData(event.data); // 处理从后端接收到的视频流数据
+    //   };
+    //   // this.socket.onclose = () => {
+    //   //   console.log('WebSocket connection closed');
+    //   // };
+    // },
     addLocalStreamToPeerConnection() {
       if (this.peerConnection) {
         this.localStream.getTracks().forEach(track => {
