@@ -193,21 +193,25 @@ export default {
       console.log(key, keyPath);
     },
     goto_msg_user() {
+      window.sessionStorage.setItem("contactor_id", "")
       if (this.$route.path === "/msg_user") {
         return
       }
       this.$router.replace('/msg_user')
     },
     goto_contactor() {
+      window.sessionStorage.setItem("contactor_id", "")
       if (this.$route.path === "/contactor") {
         return
       }
       this.$router.replace('/contactor')
     },
     goto_moment() {
+      window.sessionStorage.setItem("contactor_id", "")
       this.$router.push('/moment')
     },
     goto_collection() {
+      window.sessionStorage.setItem("contactor_id", "")
       this.$router.push('/collection')
     },
 
@@ -252,6 +256,7 @@ export default {
     }
   },
   created() {
+    window.sessionStorage.setItem("contactor_id", "")
     this.msg_value = this.$store.state.MsgSum;
     this.user_value = this.$store.state.Contactor;
     this.moment_value = this.$store.state.moments;

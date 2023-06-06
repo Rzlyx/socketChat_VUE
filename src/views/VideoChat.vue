@@ -39,15 +39,15 @@ export default {
 
       navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         .then(stream => {
-          console.log(1)
+
           this.localStream = stream;
-          console.log(2)
+
           this.$refs.localVideo.srcObject = stream;
-          console.log(3)
+
           this.createPeerConnection();
-          console.log(4)
+
           this.addLocalStreamToPeerConnection();
-          console.log(5)
+
           this.createAndSendOffer();
 
           // 手动触发loadeddata事件
@@ -73,23 +73,23 @@ export default {
       }
       this.isVideoOn = !this.isVideoOn;
     },
-    // createPeerConnection() {
-    //   // 创建RTCPeerConnection对象并设置相关事件处理程序
-    //   this.peerConnection = new RTCPeerConnection();
-    //   // ...
+    createPeerConnection() {
+      // 创建RTCPeerConnection对象并设置相关事件处理程序
+      this.peerConnection = new RTCPeerConnection();
+      // ...
 
-    //   // 建立WebSocket连接
-    //   this.socket = new WebSocket('ws://127.0.0.1:8080/ws/'+"123456987");
-    //   this.socket.onopen = () => {
-    //     console.log('WebSocket connection opened');
-    //   };
-    //   this.socket.onmessage = (event) => {
-    //     this.handleVideoData(event.data); // 处理从后端接收到的视频流数据
-    //   };
-    //   // this.socket.onclose = () => {
-    //   //   console.log('WebSocket connection closed');
-    //   // };
-    // },
+      // 建立WebSocket连接
+      this.socket = new WebSocket('ws://192.168.2.220:8080/ws/'+"123456987"+"/7861522");
+      this.socket.onopen = () => {
+        console.log('WebSocket connection opened');
+      };
+      this.socket.onmessage = (event) => {
+        this.handleVideoData(event.data); // 处理从后端接收到的视频流数据
+      };
+      // this.socket.onclose = () => {
+      //   console.log('WebSocket connection closed');
+      // };
+    },
     addLocalStreamToPeerConnection() {
       if (this.peerConnection) {
         this.localStream.getTracks().forEach(track => {
@@ -169,6 +169,7 @@ export default {
     },
   },
   created() {
+    window.sessionStorage.setItem("contactor_id", "")
     this.mediaSource = new MediaSource();
     this.mediaSource.addEventListener('sourceopen', this.handleSourceOpen);
     this.createPeerConnection();
