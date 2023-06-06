@@ -11,7 +11,6 @@ import Collection from '../views/Collection.vue'
 import Contactor from '../views/Contactor.vue'
 import ChatMsg1 from '../views/ChatMsg1.vue'
 import ChatMsg2 from '../views/ChatMsg2.vue'
-import Infomation from '../views/Infomation.vue'
 import VideoChat from '../views/VideoChat.vue'
 import AddFrind from '../views/AddFrind.vue'
 import AddGroup from '../views/AddGroup.vue'
@@ -47,7 +46,6 @@ const routes = [
       { path: '/collection', component: Collection },
     ]
   },
-  { path: '/infomation', component: Infomation },
   { path: '/addFrind', component: AddFrind },
   { path: '/addGroup', component: AddGroup }
 ]
