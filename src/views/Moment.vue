@@ -421,6 +421,7 @@ export default {
         }
     },
     created() {
+        window.sessionStorage.setItem("contactor_id", "")
         this.momentlist = this.$store.state.moment_list
     },
 

@@ -95,6 +95,9 @@ export default {
       // 发布成功后返回上一页
       this.$router.back();
     }
+  },
+  created(){
+    window.sessionStorage.setItem("contactor_id", "")
   }
 }
 </script>
