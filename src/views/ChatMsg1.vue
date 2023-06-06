@@ -45,7 +45,7 @@
       &nbsp; &nbsp;
       <div @click="get_history_msg()">
         <el-tooltip class="item" effect="dark" content="历史消息" placement="top">
-          <i class="el-icon-timer"></i>
+          <i class="el-icon-timer" @click="drawer = true"></i>
         </el-tooltip>
       </div>
     </div>
@@ -53,6 +53,14 @@
       <input type="text" v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type your message here...">
       <button class="send-btn" @click="sendMessage">Send</button>
     </div>
+    <el-drawer title="我是标题" :visible.sync="drawer" :with-header="false" size="40%">
+      <div class="block">
+        <span class="demonstration">带快捷选项</span>
+        <el-date-picker v-model="value2" type="datetimerange" :picker-options="pickerOptions" range-separator="至"
+          start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+        </el-date-picker>
+      </div>
+    </el-drawer>
   </div>
 </template>
     
@@ -66,6 +74,36 @@ export default {
   },
   data() {
     return {
+      pickerOptions: {
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
+        },
+        value2: '',
+      
+      drawer: false,
       user: {
         id: '',
         username: '123456',
@@ -84,14 +122,14 @@ export default {
     };
   },
   methods: {
-    get_remark(){
+    get_remark() {
       const targetObj2 = this.$store.state.contactor_list.find(obj => obj.friend_id === this.contactorId)
-      this.user.remark=targetObj2.name
+      this.user.remark = targetObj2.name
     },
     get_history_msg() {
-      
+
     },
-    video_chat(){
+    video_chat() {
       this.$router.push('/video_chat')
     },
     getCurrentTime() {
@@ -138,7 +176,7 @@ export default {
         send_id: this.userId,
         receive_id: this.contactorId,
         type: 0,
-        msg_type:0    
+        msg_type: 0
       });
       this.$store.commit('addMessageLocal', this.messages);
       this.$getWebSocket().send(JSON.stringify(this.messages[this.messages.length - 1]))

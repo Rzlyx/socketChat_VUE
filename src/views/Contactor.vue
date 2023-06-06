@@ -193,9 +193,12 @@
                 </el-row>
             </div>
             <div v-if="Isclick5">
-                <el-table
-                    :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-                    style="width: 100%">
+                <el-table :data="tableData" style="width: 100%">
+                    <el-table-column label="头像" prop="user_id">
+                        <template slot-scope="scope">
+                            <el-avatar :size="40"></el-avatar>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="Date" prop="date">
                     </el-table-column>
                     <el-table-column label="身份">
@@ -204,26 +207,42 @@
                             }}</el-tag>
                         </template>
                     </el-table-column>
+                    <el-table-column label="在线" prop="name">
+                        <template slot-scope="scope">
+                            <el-tooltip class="item" effect="dark" content="在线" placement="top">
+                                <i v-if="scope.row.online == 1" class="el-icon-check"></i>
+                            </el-tooltip>
+                            <el-tooltip class="item" effect="dark" content="离线" placement="top">
+                                <i v-if="scope.row.online == 0" class="el-icon-minus"></i>
+                            </el-tooltip>
+
+                        </template>
+                    </el-table-column>
                     <el-table-column label="Name" prop="name">
                     </el-table-column>
                     <el-table-column label="禁言状态">
                         <template slot-scope="scope">
-                            <el-switch v-if="scope.row.identity!=2" v-model="scope.row.status" active-color="#13ce66" inactive-color="#ff4949" :disabled="!(group_identify>scope.row.identity&&group_identify>=1)">
+                            <el-switch v-if="scope.row.identity != 2" v-model="scope.row.status" active-color="#ff4949"
+                                inactive-color="#13ce66"
+                                :disabled="!(group_identify > scope.row.identity && group_identify >= 1)">
                             </el-switch>
                         </template>
                     </el-table-column>
                     <el-table-column align="right" label="管理">
 
                         <template slot-scope="scope">
-                            <el-tooltip class="item" effect="dark" content="转让群" placement="top">
-                                <el-button v-if="scope.row.identity!=2" size="mini" type="warning" :disabled="(group_identify!=2)"
-                                    icon="el-icon-upload2"></el-button>
-                            </el-tooltip>
-                            <el-tooltip class="item" effect="dark" content="设为管理" placement="top">
-                                <el-button v-if="scope.row.identity!=2" size="mini" type="success" :disabled="(group_identify!=2)"
-                                    icon="el-icon-upload2"></el-button>
-                            </el-tooltip>
-                            <el-button size="mini" v-if="scope.row.identity!=2" type="danger" :disabled="!(group_identify>scope.row.identity&&group_identify>=1)">踢出群</el-button>
+                            <el-button-group>
+                                <el-tooltip class="item" effect="dark" content="转让群" placement="top">
+                                    <el-button v-if="scope.row.identity != 2" size="mini" type="warning"
+                                        :disabled="(group_identify != 2)" icon="el-icon-upload2"></el-button>
+                                </el-tooltip>
+                                <el-tooltip class="item" effect="dark" content="设为管理" placement="top">
+                                    <el-button v-if="scope.row.identity != 2" size="mini" type="success"
+                                        :disabled="(group_identify != 2)" icon="el-icon-upload2"></el-button>
+                                </el-tooltip>
+                                <el-button size="mini" v-if="scope.row.identity != 2" type="danger"
+                                    :disabled="!(group_identify > scope.row.identity && group_identify >= 1)">踢</el-button>
+                            </el-button-group>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -239,6 +258,9 @@
 export default {
     data() {
         return {
+            group_identify: 2,
+            tableData: [
+            ],
             status1: false,
             status2: false,
             group_identify:2,
@@ -346,6 +368,36 @@ export default {
         }
     },
     methods: {
+        handleEdit(index, row) {
+            console.log(index, row);
+        },
+        handleDelete(index, row) {
+            console.log(index, row);
+        },
+        async get_group_user_list(group_id) {
+            group_id = '2172635274176102400'
+            var id = window.sessionStorage.getItem("userid")
+            const { data: res } = await this.$http.post("http://127.0.0.1:8070/GetGroupAllUser", { user_id: id, group_id: group_id })
+            console.log(res)
+            this.tableData = res.data
+            this.tableData.sort(function (a, b) {
+                // 根据 identity 进行降序排序
+                if (a.identity < b.identity) {
+                    return 1;
+                } else if (a.identity > b.identity) {
+                    return -1;
+                } else {
+                    // 如果 identity 相同，根据 online 进行降序排序
+                    if (a.online < b.online) {
+                        return 1;
+                    } else if (a.online > b.online) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            })
+        },
         get_identify(num) {
             if (num == 2) {
                 return { name: "群主", status: "warning" }
@@ -358,7 +410,7 @@ export default {
         async get_contactor_list() {
             const id = window.sessionStorage.getItem("userid")
             console.log(id)
-            const { data: res } = await this.$http.post("http://192.168.1.208:8070/queryFriendList", { user_id: parseInt(id, 10) });
+            const { data: res } = await this.$http.post("http://127.0.0.1:8070/queryFriendList", { user_id: parseInt(id, 10) });
             setTimeout(() => {
                 console.log(res);
             }, 200);

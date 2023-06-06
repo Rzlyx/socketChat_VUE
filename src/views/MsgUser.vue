@@ -66,13 +66,13 @@ export default {
     },
     methods: {
         async get_users() {
-            const { data: res } = await this.$http.post('http://192.168.1.208:8070/queryContactorList', { user_id: "123456" });
+            const { data: res } = await this.$http.post('http://127.0.0.1:8070/queryContactorList', { user_id: "123456" });
             setTimeout(() => {
                 console.log(res);
             }, 200);
         },
         async update_user_list() {
-            const { data: res } = await this.$http.post('http://192.168.1.208:8070/setContactorList', this.users);
+            const { data: res } = await this.$http.post('http://127.0.0.1:8070/setContactorList', this.users);
 
         },
         toggleHighlight(userId, index) {
