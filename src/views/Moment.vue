@@ -344,6 +344,19 @@ export default {
         }
     },
     methods: {
+        async get_moment_list() {
+            try {
+                const { data } = await this.$http.post('http://192.168.2.220:8070/queryAllFriendCircle',{
+                    user_id: this.user_id,
+                    readtime: this.readtime,
+                    num: this.num,
+                })
+                this.momentlist = data // 将数据存储到组件data中的momentlist中
+            } catch (error) {
+                console.error('获取朋友圈列表失败：', error)
+            }
+        },
+
         imageRows(momentI) {
             // 根据行数计算每一行应该展示的图片地址
             const rows = []
@@ -380,8 +393,8 @@ export default {
             }
             this.$store.commit('momentLikes', like_info);
             this.momentlist = this.$store.state.moment_list;
-            //
         },
+
         handleCommentSubmit(index) {
             const userid = '12345612'   /*window.localStorage.getItem("id")*/
             const username = '小任' /*window.localStorage.getItem("username")*/
@@ -399,9 +412,6 @@ export default {
             console.log(this.momentlist[index])
         },
 
-        handleMomentAdded(momentI) {
-            this.moments.unshift(momentI);
-        },
 
         showInfo() {
             if (this.showInfo) {

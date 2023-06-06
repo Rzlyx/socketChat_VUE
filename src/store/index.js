@@ -5,7 +5,7 @@ import axios from 'axios';
 Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
-    tem_name:"",
+    tem_name: "",
     MsgSum: 0,
     Contactor: 0,
     moments: 0,
@@ -172,7 +172,7 @@ const store = new Vuex.Store({
     get_msg_user(state, msg_user) {
       var highlighted = false;
       var num = 0;
-      if(msg_user && Array.isArray(msg_user)){
+      if (msg_user && Array.isArray(msg_user)) {
         state.user_list = msg_user.map(function (user) {
           return {
             id: user.id,
@@ -184,11 +184,30 @@ const store = new Vuex.Store({
             num: num
           };
         });
-      }else{
+      } else {
         return
-      }},
-      
-
+      }
+    },
+    get_moment_list(state, momentList) {
+      if (Array.isArray(momentList) && momentList.length > 0) {
+        // 循环处理每个朋友圈数据
+        state.momentList = momentList.map(moment => {
+          return {
+            id: moment.id, // 朋友圈ID
+            avatar: moment.user.avatar, // 用户头像
+            username: moment.user.username, // 用户名字
+            content: moment.content, // 朋友圈内容
+            pictures: moment.pictures, // 图片列表
+            time: moment.time, // 发布时间
+            comments: moment.comments, // 评论列表
+            likes: moment.likes, // 点赞列表
+            isLiked: false // 是否已经点赞
+          }
+        })
+      } else {
+        state.momentList = []
+      }
+    },
     momentLikes(state, like_info) {
       const target_moment = state.moment_list[like_info.index]// 第一步：根据传入的 index 取出目标动态对象
       const existing_like = target_moment.likes.find(like => like.id === like_info.id)// 第二步：判断用户是否重复点赞了该动态
@@ -212,7 +231,7 @@ const store = new Vuex.Store({
     updateContactList(state, contactList) {
       state.contactor_list = contactList
     },
-    updateGList(state,listG){
+    updateGList(state, listG) {
       state.my_group_list = listG
     },
     inspectMsg(state, userId) {
@@ -243,10 +262,10 @@ const store = new Vuex.Store({
       }
 
       const contactor_id = window.sessionStorage.getItem('contactor_id')
-      
+
       const targetObj = context.user_list.find(obj => obj.id === send_id)
       if (targetObj) {
-        
+
         if (contactor_id == message.send_id) {
           targetObj.new_msg = message.context
           targetObj.time = message.time
@@ -254,7 +273,7 @@ const store = new Vuex.Store({
         else {
           targetObj.new_msg = message.context
           targetObj.num++
-         
+
           targetObj.new_msg = message.context
           targetObj.time = message.time
 
@@ -268,11 +287,11 @@ const store = new Vuex.Store({
           "name": targetObj2.name,
           "new_msg": message.context,
           "time": message.time,
-          "picture": 'http://192.168.1.208:8070/getPhotoByID/'+send_id,
+          "picture": 'http://192.168.1.208:8070/getPhotoByID/' + send_id,
           "highlighted": false,
           "num": 1
         })
-        
+
         context.MsgSum++
       }
       this.dispatch('update_msg_user');
@@ -291,14 +310,14 @@ const store = new Vuex.Store({
         // 处理错误情况
       }
     },
-    async get_user_info(context,id) {
+    async get_user_info(context, id) {
       try {
-        const { data: res } = await axios.post('http://192.168.1.208:8070/queryUserInfo', {user_id:id});
+        const { data: res } = await axios.post('http://192.168.1.208:8070/queryUserInfo', { user_id: id });
         // 处理响应数据或其他操作
         if (res.code === 1000) {
-          context.tem_name=res.data.user_info.user_name
-          console.log(context.tem_name,11111)
-          return 
+          context.tem_name = res.data.user_info.user_name
+          console.log(context.tem_name, 11111)
+          return
         }
       } catch (error) {
         // 处理错误情况
