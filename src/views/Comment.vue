@@ -69,6 +69,9 @@ export default {
       });
       this.commentInput = '';
     }
+  },
+  created(){
+    window.sessionStorage.setItem("contactor_id", "")
   }
 }
 </script>

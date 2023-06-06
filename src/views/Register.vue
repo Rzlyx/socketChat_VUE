@@ -56,6 +56,9 @@ export default {
             });
         }
     },
+    created(){
+        window.sessionStorage.setItem("contactor_id", "")
+    }
 }
 </script>
 

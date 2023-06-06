@@ -5,70 +5,77 @@
                 <div class="image-container">
                     <div class="backgrand">
                         <el-image :src="url" :preview-src-list="srcList"></el-image>
+                        <img class="avatar" :src="url" @click="toggleInfo">
+                        <div class="username" v-if="!isShowInfo">{{ username }}</div>
+                        <div v-if="isShowInfo" class="info-container" @click="toggleInfo">
+                            <img class="avatar" :src="info.avatar">
+                            <div class="name">{{ info.name }}</div>
+                            <div class="email">{{ info.email }}</div>
+                        </div>
                     </div>
                     <div class="button-container">
                         <router-link to="/momentitem" class="link-class">
                             <i style="font-size: 24px" class="el-icon-camera"></i>
                         </router-link>
                     </div>
-
                 </div>
-                <div class="moment_list">
-                    <div v-for="(momentI, index) in momentlist" :key="momentI.id">
-                        <div class="moment-container">
-                            <div class="moment-avetor">
-                                <el-avatar :size="50" :src="momentI.avator"></el-avatar>
-                            </div>&nbsp;&nbsp;
-                            <div class="moment-name">{{ momentI.name }}</div>
-                        </div>
-                        <div class="moment-info">
-                            <div class="moment-msg">{{ momentI.new_msg }}</div>
-                            <div class="moment-picture" ref="imageList">
-                                <div v-for="(item, index) in imageRows(momentI)" :key="index" class="image-row">
-                                    <div v-for="image in item" :key="image"
-                                        :style="{ width: imageSize(momentI) + 'px', height: imageSize(momentI) + 'px', backgroundImage: 'url(' + image + ')' }"
-                                        class="image">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="moment-time">
-                            <div>{{ momentI.time }}</div>
-                            <div class="moment-icon">
-                                <el-tooltip class="item" effect="dark" content="点赞" placement="bottom">
-                                    <div><i @click="handleLikeClick(index)" class="el-icon-magic-stick"></i></div>
-                                </el-tooltip>
-                                <el-tooltip class="item" effect="dark" content="评论" placement="bottom">
-                                    <div><i @click="showCommentBox = true" class="el-icon-chat-square"></i></div>
-                                </el-tooltip>
-                            </div>
-                        </div>
-                        <div class="moment-comment">
-                            <div class="like-list" v-if="momentI.likes.length !== 0">
-                                <div v-if="momentI.likes" class="like">
-                                    <i class="el-icon-magic-stick"></i>
-                                    <span class="like-names">
-                                        <span v-for="(like, index) in momentI.likes" :key="index">{{ like.name }} </span>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="comment-list" v-if="momentI.comments.length !== 0">
-                                <div v-if="momentI.comments" v-for="(comment, index) in momentI.comments" :key="index"
-                                    class="comment">
-                                    <div class="comment-info">
-                                        <span class="comment-name">{{ comment.name }}:</span>
-                                        <span class="comment-content">{{ comment.content }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div v-if="showCommentBox" class="comment-box">
-                                <input v-model="commentInput" placeholder="评论...">
-                                <button @click="handleCommentSubmit(index)">提交评论</button>
-                            </div>
 
+            </div>
+            <div class="moment_list">
+                <div v-for="(momentI, index) in momentlist" :key="momentI.id">
+                    <div class="moment-container">
+                        <div class="moment-avetor">
+                            <el-avatar :size="50" :src="momentI.avator"></el-avatar>
+                        </div>&nbsp;&nbsp;
+                        <div class="moment-name">{{ momentI.name }}</div>
+                    </div>
+                    <div class="moment-info">
+                        <div class="moment-msg">{{ momentI.new_msg }}</div>
+                        <div class="moment-picture" ref="imageList">
+                            <div v-for="(item, index) in imageRows(momentI)" :key="index" class="image-row">
+                                <div v-for="image in item" :key="image"
+                                    :style="{ width: imageSize(momentI) + 'px', height: imageSize(momentI) + 'px', backgroundImage: 'url(' + image + ')' }"
+                                    class="image">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="moment-time">
+                        <div>{{ momentI.time }}</div>
+                        <div class="moment-icon">
+                            <el-tooltip class="item" effect="dark" content="点赞" placement="bottom">
+                                <div><i @click="handleLikeClick(index)" class="el-icon-magic-stick"></i></div>
+                            </el-tooltip>
+                            <el-tooltip class="item" effect="dark" content="评论" placement="bottom">
+                                <div><i @click="showCommentBox = true" class="el-icon-chat-square"></i></div>
+                            </el-tooltip>
+                        </div>
+                    </div>
+                    <div class="moment-comment">
+                        <div class="like-list" v-if="momentI.likes.length !== 0">
+                            <div v-if="momentI.likes" class="like">
+                                <i class="el-icon-magic-stick"></i>
+                                <span class="like-names">
+                                    <span v-for="(like, index) in momentI.likes" :key="index">{{ like.name }} </span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="comment-list" v-if="momentI.comments.length !== 0">
+                            <div v-if="momentI.comments" v-for="(comment, index) in momentI.comments" :key="index"
+                                class="comment">
+                                <div class="comment-info">
+                                    <span class="comment-name">{{ comment.name }}:</span>
+                                    <span class="comment-content">{{ comment.content }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="showCommentBox" class="comment-box">
+                            <input v-model="commentInput" placeholder="评论...">
+                            <button @click="handleCommentSubmit(index)">提交评论</button>
                         </div>
 
                     </div>
+
                 </div>
             </div>
         </el-aside>
@@ -106,15 +113,69 @@
 
 .backgrand {
     position: relative;
-    /* 其他样式 */
+}
+
+.avatar {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    cursor: pointer;
+}
+
+.username {
+    position: absolute;
+    bottom: 20px;
+    left: 10px;
+    font-size: 16px;
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.avatar:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.info-container {
+    position: absolute;
+    top: calc(100% + 15px);
+    left: 50%;
+    transform: translate(-50%, 0);
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    width: 300px;
+    line-height: 1.5;
+}
+
+.info-container img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    margin-bottom: 8px;
+}
+
+.info-container .name {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.info-container .email {
+    font-size: 16px;
+    color: #666;
 }
 
 .button-container {
     position: absolute;
-    top: 10px;
-    /* 调整垂直位置 */
-    right: 10px;
-    /* 调整水平位置 */
+    top: 0px;
+    right: 0px;
+    padding: 10px;
 }
 
 .link-class {
@@ -247,9 +308,15 @@
 export default {
     data() {
         return {
-            showPopover: false,
-            url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-            srcList: ['https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'],
+            username: 'John Doe',
+            url: 'https://picsum.photos/800/600',
+            srcList: ['https://picsum.photos/800/600'],
+            isShowInfo: false,
+            info: {
+                name: 'John Doe',
+                email: 'john@example.com',
+                avatar: 'https://picsum.photos/800/600'
+            },
             momentlist: [
             ],
             momentI: {
@@ -259,6 +326,7 @@ export default {
             listWidth: 280, // 图片列表宽度
             showCommentBox: false,
             commentInput: '',
+            showPopover: false,
 
         };
     },
@@ -267,6 +335,7 @@ export default {
             this.listWidth = this.$refs.imageList ? this.$refs.imageList.offsetWidth : 0;
         });
         this.momentlist = JSON.parse(JSON.stringify(this.momentlist));
+
     },
 
     computed: {
@@ -310,7 +379,7 @@ export default {
                 index: index
             }
             this.$store.commit('momentLikes', like_info);
-            this.momentlist=this.$store.state.moment_list;
+            this.momentlist = this.$store.state.moment_list;
             //
         },
         handleCommentSubmit(index) {
@@ -324,7 +393,7 @@ export default {
                 index: index
             }
             this.$store.commit('momentComments', comment_info);
-            this.momentlist=this.$store.state.moment_list;
+            this.momentlist = this.$store.state.moment_list;
             this.commentInput = '';
             this.showCommentBox = false;
             console.log(this.momentlist[index])
@@ -334,8 +403,25 @@ export default {
             this.moments.unshift(momentI);
         },
 
+        showInfo() {
+            if (this.showInfo) {
+                this.hideInfo();
+            } else {
+                const avatar = this.$el.querySelector('.avatar');
+                const rect = avatar.getBoundingClientRect();
+                const container = this.$el.querySelector('.info-container');
+                container.style.top = `${rect.bottom}px`;
+                container.style.left = `${rect.left + (rect.right - rect.left) / 2}px`;
+                container.style.transform = 'translate(-50%, -50%)';
+                this.showInfo = true;
+            }
+        },
+        toggleInfo() {
+            this.isShowInfo = !this.isShowInfo;
+        }
     },
     created() {
+        window.sessionStorage.setItem("contactor_id", "")
         this.momentlist = this.$store.state.moment_list
     },
 

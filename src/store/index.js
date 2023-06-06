@@ -5,7 +5,7 @@ import axios from 'axios';
 Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
-    tem_name:"",
+    tem_name: "",
     MsgSum: 0,
     Contactor: 0,
     moments: 0,
@@ -172,22 +172,30 @@ const store = new Vuex.Store({
     get_msg_user(state, msg_user) {
       var highlighted = false;
       var num = 0;
-      if(msg_user && Array.isArray(msg_user)){
+      if (msg_user && Array.isArray(msg_user)) {
         state.user_list = msg_user.map(function (user) {
+          if(user.status==0){
+            var status="danger"
+          }else{
+            var status="info"
+          }
           return {
             id: user.id,
             name: user.name,
-            new_msg: user.message,
+            new_msg: user.new_msg,
             time: user.time,
-            picture: "http://192.168.1.208:8070/getPhotoByID/" + user.id,
+            picture: "http://192.168.2.220:8070/getPhotoByID/" + user.id,
             highlighted: highlighted,
-            num: num
+            num: num,
+            status:status
           };
         });
-      }else{
+      } else {
         return
-      }},
-      
+      }
+
+    },
+
 
     momentLikes(state, like_info) {
       const target_moment = state.moment_list[like_info.index]// 第一步：根据传入的 index 取出目标动态对象
@@ -212,17 +220,24 @@ const store = new Vuex.Store({
     updateContactList(state, contactList) {
       state.contactor_list = contactList
     },
-    updateGList(state,listG){
+    updateGList(state, listG) {
       state.my_group_list = listG
     },
-    inspectMsg(state, userId) {
-      const targetObj = state.user_list.find(obj => obj.id === userId)
+    inspectMsg(context, userId) {
+      var id =window.sessionStorage.getItem("userid")
+      const targetObj = context.user_list.find(obj => obj.id === userId)
       var t = targetObj.num
+      var contact_id = targetObj.id
+      var info = {
+        user_id: id,
+        friend_id: contact_id
+      }
+      
+      this.dispatch('update_msg_readtime', info)
       targetObj.num = 0;
-      state.MsgSum -= t
+      context.MsgSum -= t
     },
     addMessageLocal(context, messages) {
-      console.log(messages)
       var last = messages.length - 1
       var receive_id = messages[last].receive_id
       context.message[receive_id] = messages
@@ -230,11 +245,14 @@ const store = new Vuex.Store({
       const targetObj = context.user_list.find(obj => obj.id === receive_id)
       targetObj.new_msg = temp_message.context
       targetObj.time = temp_message.time
+      
       this.dispatch('update_msg_user');
     },
 
 
     async addMessageReceive(context, message) {
+
+      //获取当前联系人的id，判断当前message里是否存在这个联系人
       const send_id = message.send_id
       if (context.message[send_id]) {
         context.message[send_id].push(message);
@@ -243,62 +261,94 @@ const store = new Vuex.Store({
       }
 
       const contactor_id = window.sessionStorage.getItem('contactor_id')
-      
+      //在mgs_user里找到对应的联系人
       const targetObj = context.user_list.find(obj => obj.id === send_id)
+      //如果找到了
+
       if (targetObj) {
-        
+        //如果我当前的页面就是这个联系人，只将最新消息赋给
         if (contactor_id == message.send_id) {
           targetObj.new_msg = message.context
           targetObj.time = message.time
         }
-        else {
+        else {//如果当前页面不是这个联系人，那就是把气泡加一
           targetObj.new_msg = message.context
           targetObj.num++
-         
+
           targetObj.new_msg = message.context
           targetObj.time = message.time
 
           context.MsgSum++
         }
-      } else {
+      } else {//如果没找到，构建一个新的对象塞进去
         const targetObj2 = context.contactor_list.find(obj => obj.friend_id === send_id)
-        console.log(targetObj2)
+        if (message.msg_type==0||message.msg_type==6){
+          //如果这个是通知消息，整个未读消息加1
+          context.MsgSum++
+          var status=""
+        }else{
+          var status="warning"
+        }
         context.user_list.push({
           "id": send_id,
           "name": targetObj2.name,
           "new_msg": message.context,
           "time": message.time,
-          "picture": 'http://192.168.1.208:8070/getPhotoByID/'+send_id,
+          "picture": 'http://192.168.2.220:8070/getPhotoByID/' + send_id,
           "highlighted": false,
-          "num": 1
+          "num": 1,  //将这个用户的未读消息设为1
+          "status":status
         })
         
-        context.MsgSum++
+        
       }
+
       this.dispatch('update_msg_user');
     },
 
   },
   actions: {
     async update_msg_user(context) {
+      var id =window.sessionStorage.getItem("userid")
+      const newContactorList = context.state.user_list.map(user => {
+        if(user.status=="") var new_status=0
+        else                var  new_status=1
+        return {
+          id: user.id,
+          new_msg: user.new_msg,
+          name: user.name,
+          time: user.time,
+          status: new_status
+        };
+      });
       try {
-        const { data: res } = await axios.post('http://192.168.1.208:8070/setContactorList', context.state.user_list);
+        const { data: res } = await axios.post('http://192.168.2.220:8070/setContactorList', {user_id:id,contactor_list:newContactorList});
         // 处理响应数据或其他操作
         if (res.code === 1000) {
-          console.log("更新成功")
+        }else{
+          console.log("更新信息失败",res)
         }
       } catch (error) {
         // 处理错误情况
       }
     },
-    async get_user_info(context,id) {
+    async get_user_info(context, id) {
       try {
-        const { data: res } = await axios.post('http://192.168.1.208:8070/queryUserInfo', {user_id:id});
+        const { data: res } = await axios.post('http://192.168.2.220:8070/queryUserInfo', { user_id: id });
         // 处理响应数据或其他操作
         if (res.code === 1000) {
-          context.tem_name=res.data.user_info.user_name
-          console.log(context.tem_name,11111)
-          return 
+          context.tem_name = res.data.user_info.user_name
+          return
+        }
+      } catch (error) {
+        // 处理错误情况
+      }
+    },
+    async update_msg_readtime(context, info) {
+      try {
+        const { data: res } = await axios.post('http://192.168.2.220:8070/setReadTime', info);
+        // 处理响应数据或其他操作
+        if (res.code === 1000) {
         }
       } catch (error) {
         // 处理错误情况

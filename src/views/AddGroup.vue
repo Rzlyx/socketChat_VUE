@@ -119,7 +119,7 @@ export default {
                     return this.$message.error('添加失败');
                 }
                 this.$message.success('添加信息发送成功');
-                console.log(response)
+
                 // this.$root.$emit('AddSuccess');
             } catch (error) {
                 console.error(error);
@@ -162,6 +162,7 @@ export default {
         }
     },
     created() {
+        window.sessionStorage.setItem("contactor_id", "")
         this.my_frinds_list = this.$store.state.my_friends_list
         console.log(this.my_frinds_list)
         // const response = this.$http.post('http://192.168.2.172:8070/queryGroupApply', window.sessionStorage.getItem("userid"));
