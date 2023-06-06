@@ -99,7 +99,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 /* 样式可以根据实际需求进行调整 */
 .friend-circle {
   display: flex;

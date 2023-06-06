@@ -2,7 +2,7 @@
     <div class="container">
         <div class="aside">
             <div class="block">
-                <div class="lable" @click="$router.push('/addFrind')">
+                <div class="lable" @click="Addf()">
                     <div>
                         <img :src="avator" alt="新的朋友">
                     </div>
@@ -64,7 +64,8 @@
 
         </div>
         <div class="main">
-            <div class="default_picture" v-if="Isclick === false && Isclick2 === false && Isclick5 === false">
+            <div class="default_picture"
+                v-if="Isclick === false && Isclick2 === false && Isclick3 === false && Isclick5 === false">
                 <div class="center">
                     <i class="el-icon-chat-dot-square"></i>
                 </div>
@@ -89,17 +90,19 @@
 
                             </div>
                             <div class="mark">
-                                <el-form :model="form" label-width="80px">
+                                <el-form :model="formcon" label-width="80px">
                                     <el-form-item label="备注" class="Remark">
                                         <div class="input-container">
-                                            <el-input v-model="form.notes" placeholder="无" :border="false"></el-input>
+                                            <el-input v-model="formcon.notes" placeholder="无" :border="false"
+                                                ref="inputNotes" @keyup.native.enter="handleEnter()"></el-input>
                                             <el-tooltip class="item" effect="dark" content="修改" placement="top">
-                                                <el-button type="primary" icon="el-icon-edit" circle></el-button>
+                                                <el-button type="primary" icon="el-icon-edit" @click="UpdataRemark()"
+                                                    circle></el-button>
                                             </el-tooltip>
                                         </div>
                                     </el-form-item>
-                                    <el-form-item label="消息">
-                                        <el-select v-model="select_value"
+                                    <el-form-item label="通知">
+                                        <el-select v-model="select_value" @change="handleSelectChange"
                                             :placeholder="choose_msg_type(this.info.is_private_chat_gray)">
                                             <el-option v-for="item in options" :key="item.value" :label="item.label"
                                                 :value="item.value" :disabled="item.disabled">
@@ -107,10 +110,24 @@
                                         </el-select>
                                     </el-form-item>
                                     <el-form-item label="标签">
-                                        <el-tag type="success">{{form.tags}}</el-tag>
+                                        <div>
+                                            <!-- 渲染标签 -->
+                                            <el-tag v-for="(tag, index) in formcon.tags" :key="index" type="success"
+                                                :class="{ hoverable: isTagHovered }"
+                                                @mouseenter="handleTagHover(index, true)"
+                                                @mouseleave="handleTagHover(index, false)" closable
+                                                @close="removeTag(index, tag)">
+                                                {{ tag[index] }}
+                                            </el-tag>
+
+                                            <!-- 输入框 -->
+                                            <el-input v-model="newTag" placeholder="新建标签" @keyup.enter="addTag"
+                                                style="width: 120px;margin-left: 30px;"></el-input>
+                                        </div>
                                     </el-form-item>
                                     <el-form-item label="签名">
-                                        <el-tag type="info">{{ form.signature }}</el-tag>
+                                        <el-tag type="info">
+                                            {{ formcon.signature }}</el-tag>
                                     </el-form-item>
                                     <el-form-item label="状态">
                                         <el-tag type="info">{{ getStatusText }}</el-tag>
@@ -120,15 +137,15 @@
                             </div>
                             <div class="limits">
                                 <el-switch style="display: block ;margin-left: 40px;" v-model="status1"
-                                    inactive-text="不看他朋友圈"></el-switch>
-                                <el-switch style="display: block ;margin-left: 40px;" v-model="status2"
-                                    inactive-text="拉黑"></el-switch>
+                                    inactive-text="不看他朋友圈" @change="handleSwitchChange1"></el-switch>
+                                <el-switch style="display: block ;margin-left: 40px;" v-model="status2" inactive-text="拉黑"
+                                    @change="handleSwitchChange2"></el-switch>
                             </div>
                             <div style="padding: 14px;">
                                 <div class="bottom_div clearfix">
                                     <el-button type="primary" size="small" @click="JumpChat()">文字聊天</el-button>
                                     <el-button type="primary" size="small">视频聊天</el-button>
-                                    <el-button type="danger" size="small">删除好友</el-button>
+                                    <el-button type="danger" size="small" @click="Del">删除好友</el-button>
                                 </div>
                             </div>
                         </el-card>
@@ -144,54 +161,122 @@
                                     <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
                                         class="image">
                                 </div>
-                                <div class="info">
+                                <div class="info" v-if="!IsGO">
+                                    <label>群名:</label>
                                     <div class="item">{{ groupInfo.group_name }}</div>
                                     <div class="item"></div>
+                                    <label>群号:</label>
                                     <div class="item">{{ groupInfo.group_id }}</div>
                                     <div class="item"></div>
+                                    <label>创建时间:</label>
                                     <div class="item">{{ groupInfo.create_time }}</div>
 
                                 </div>
-
+                                <el-form class="infoG" v-if="IsGO">
+                                    <el-form-item label="群名">
+                                        <el-input class="item" v-model="groupInfo.group_name"
+                                            @keyup.native.enter="handleEnterGNandDesc()"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="群号">
+                                        <el-input class="item" v-model="groupInfo.group_id" readonly></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="创建时间">
+                                        <el-input class="item" v-model="groupInfo.create_time" readonly></el-input>
+                                    </el-form-item>
+                                </el-form>
                             </div>
                             <div class="mark">
-                                <el-form :model="form" label-width="80px">
+                                <el-form :model="groupInfo" label-width="80px">
                                     <el-form-item label="备注">
                                         <div class="input-container">
-                                            <el-input v-model="form.notes" placeholder="无" :border="false"></el-input>
+                                            <el-input v-model="groupInfo.my_group_name" placeholder="无" :border="false"
+                                                ref="inputNotesG" @keyup.native.enter="handleEnterG()"></el-input>
                                             <el-tooltip class="item" effect="dark" content="修改" placement="top">
-                                                <el-button type="primary" icon="el-icon-edit" circle></el-button>
+                                                <el-button type="primary" icon="el-icon-edit" @click="UpdataRemarkG()"
+                                                    circle></el-button>
                                             </el-tooltip>
                                         </div>
                                     </el-form-item>
-                                    <el-form-item label="消息">
-                                        <el-select v-model="select_value2"
+                                    <el-form-item label="通知">
+                                        <el-select v-model="select_value2" @change="handleSelectChangeG"
                                             :placeholder="choose_msg_type(this.groupInfo.msg_type)">
                                             <el-option v-for="item in options2" :key="item.value" :label="item.label"
                                                 :value="item.value" :disabled="item.disabled">
                                             </el-option>
                                         </el-select>
                                     </el-form-item>
-                                    <el-form-item label="公告">
+                                    <el-form-item label="公告" v-if="!IsGO">
                                         <el-tag type="info">{{ groupInfo.description }}</el-tag>
                                     </el-form-item>
-                                    <el-form-item label="标签">
-                                        <el-tag type="success">我加入的群</el-tag>&nbsp;&nbsp;<el-tag type="info">我管理的群</el-tag>
+                                    <el-form-item label="公告" v-if="IsGO">
+                                        <el-input class="item" v-model="groupInfo.description"
+                                            @keyup.native.enter="handleEnterGNandDesc()"></el-input>
                                     </el-form-item>
-
                                 </el-form>
                             </div>
                             <div style="padding: 14px;">
                                 <div class="bottom_div clearfix">
-                                    <el-button type="primary" size="small" @click="JumpChat()">文字聊天</el-button>
-                                    <el-button type="primary" size="small">群成员管理</el-button>
-                                    <el-button type="danger" size="small">退出群聊</el-button>
+                                    <div class="button-wrapper" style="margin-left: 30px;"><el-button type="primary"
+                                            size="small" @click="JumpChat()">文字聊天</el-button></div>
+                                    <div v-if="IsGO" class="button-wrapper"><el-button type="primary" size="small"
+                                            @click="GmemberManage()">群成员管理</el-button></div>
+                                    <div v-if="IsGO" class="button-wrapper"><el-button type="danger" size="small"
+                                            @click="DissolveGroup()">解散群聊</el-button></div>
+                                    <div v-if="!IsGO" class="button-wrapper"><el-button type="danger" size="small"
+                                            @click="QuitGroup()">退出群聊</el-button></div>
+
+
                                 </div>
                             </div>
                         </el-card>
                     </el-col>
                 </el-row>
             </div>
+            <div v-if="Isclick3">
+                <el-table :data="tableData3" style="width: 100%">
+                    <el-table-column label="申请昵称" prop="applicant_name">
+                    </el-table-column>
+                    <el-table-column label="申请人账号" prop="apply_id">
+                    </el-table-column>
+                    <el-table-column label="Desc" prop="reason">
+                    </el-table-column>
+                    <el-table-column align="right">
+                        <template slot="header" slot-scope="scope">
+                            <el-input v-model="AddsearchF" size="mini" @keyup.native.enter="applyF()" placeholder="新增联系人" />
+                        </template>
+                        <template slot-scope="scope">
+                            <el-button size="mini" type="primary"
+                                @click="AgreeApply(scope.$index, scope.row)">同意</el-button>
+                            <el-button size="mini" type="danger"
+                                @click="NegateApply(scope.$index, scope.row)">拒绝</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+
+
+            <div class="AfterSearch">
+                <el-dialog :visible.sync="dialogVisibleF" v-if="searchFmsg" width="35%">
+                    <div class="content">
+                        <div class="item item1">{{ searchGmsg.group_name }}</div>
+                        <div class="item item2">{{ searchGmsg.group_id }}</div>
+                        <div class="item item3">{{ searchGmsg.description }}</div>
+                        <div class="item item4">{{ searchGmsg.create_time }}</div>
+
+                    </div>
+
+                    <span slot="footer" class="dialog-footer">
+                        <div style="display:flex">
+                            <el-input v-model="applyfrom.reason" style="margin-right: 10px;" placeholder="输入原因" />
+                            <el-button @click="dialogVisible2 = false, searchG = ''">取 消</el-button>
+                            <el-button type="primary" @click="ApplyAG()">申请入群</el-button>
+                        </div>
+
+                    </span>
+                </el-dialog>
+            </div>
+
+
             <div v-if="Isclick5">
                 <el-table
                     :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
@@ -208,7 +293,9 @@
                     </el-table-column>
                     <el-table-column label="禁言状态">
                         <template slot-scope="scope">
-                            <el-switch v-if="scope.row.identity!=2" v-model="scope.row.status" active-color="#13ce66" inactive-color="#ff4949" :disabled="!(group_identify>scope.row.identity&&group_identify>=1)">
+                            <el-switch v-if="scope.row.identity != 2" v-model="scope.row.status" active-color="#13ce66"
+                                inactive-color="#ff4949"
+                                :disabled="!(group_identify > scope.row.identity && group_identify >= 1)">
                             </el-switch>
                         </template>
                     </el-table-column>
@@ -216,14 +303,15 @@
 
                         <template slot-scope="scope">
                             <el-tooltip class="item" effect="dark" content="转让群" placement="top">
-                                <el-button v-if="scope.row.identity!=2" size="mini" type="warning" :disabled="(group_identify!=2)"
-                                    icon="el-icon-upload2"></el-button>
+                                <el-button v-if="scope.row.identity != 2" size="mini" type="warning"
+                                    :disabled="(group_identify != 2)" icon="el-icon-upload2"></el-button>
                             </el-tooltip>
                             <el-tooltip class="item" effect="dark" content="设为管理" placement="top">
-                                <el-button v-if="scope.row.identity!=2" size="mini" type="success" :disabled="(group_identify!=2)"
-                                    icon="el-icon-upload2"></el-button>
+                                <el-button v-if="scope.row.identity != 2" size="mini" type="success"
+                                    :disabled="(group_identify != 2)" icon="el-icon-upload2"></el-button>
                             </el-tooltip>
-                            <el-button size="mini" v-if="scope.row.identity!=2" type="danger" :disabled="!(group_identify>scope.row.identity&&group_identify>=1)">踢出群</el-button>
+                            <el-button size="mini" v-if="scope.row.identity != 2" type="danger"
+                                :disabled="!(group_identify > scope.row.identity && group_identify >= 1)">踢出群</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -239,9 +327,14 @@
 export default {
     data() {
         return {
+            searchFmsg:'',
+            AddsearchF: '',
+            IsGO: false,
+            newTag: '',//新建标签
+            isTagHovered: null,//标签鼠标悬停
             status1: false,
             status2: false,
-            group_identify:2,
+            group_identify: 2,
             tableData: [{
                 date: '2016-05-02',
                 identity: 2,
@@ -285,9 +378,9 @@ export default {
                 status: true,
                 address: '上海市普陀区金沙江路 1518 弄'
             },],
-            status1: true,
-            status2: true,
-            status3: true,
+            tableData3: [],
+            status1: false,
+            status2: false,
             select_value: '',
             select_value2: '',
             options: [{
@@ -325,16 +418,15 @@ export default {
             avator: 'https://img1.baidu.com/it/u=1582149699,3121859091&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=501',
             Isclick: false,
             Isclick2: false,
+            Isclick3: true,
+            Isclick5: false,
             info: {},//存放点击好友获得的信息
-            form: {
+            formcon: {
                 notes: '',
                 signature: '',
                 tags: [],
                 status: 0
             },//存放好友信息的备注
-            Isclick5: true,
-            info: {},
-            form: {},
             groupInfo: {},
             highlightedUserId: '',
             index1: '',
@@ -342,10 +434,285 @@ export default {
             friendform: {
                 name: '',
                 desc: ''
-            }
+            },
         }
     },
     methods: {
+        applyF() {
+            if (this.AddsearchF != '') {
+                this.$http.post('http://192.168.2.172:8070/searchFriendOrGroup',
+                    { context: this.AddsearchF }).then(response => {
+                        console.log(response.data.data)
+                        return this.$message.success('操作成功');
+                    }).catch(error => {
+                        console.log(error)
+                        return this.$message.error('系统内部内部错误');
+                    })
+            }
+        },
+        async AgreeApply(idx, d) {//同意申请
+            console.log(idx, d)
+            await this.$http.post('http://192.168.2.172:8070/agreeFriendApply',
+                { apply_id: d.apply_id, user_id: window.sessionStorage.getItem("userid"), friend_id: d.applicant_id }).then(response => {
+                    this.tableData3 = []
+                    return this.$message.success('操作成功');
+                }).catch(error => {
+                    console.log(error)
+                    return this.$message.error('系统内部内部错误');
+                })
+        },
+        async NegateApply(idx, d) {
+            await this.$http.post('http://192.168.2.172:8070/disagreeFriendApply',
+                { apply_id: d.apply_id, user_id: window.sessionStorage.getItem("userid"), friend_id: d.applicant_id }).then(response => {
+                    this.tableData3 = []
+                    return this.$message.success('操作成功');
+                }).catch(error => {
+                    console.log(error)
+                    return this.$message.error('系统内部内部错误');
+                })
+        },
+        async Addf() {//添加好友或查看好友申请
+            await this.$http.post('http://192.168.2.172:8070/queryFriendApply',
+                { user_id: window.sessionStorage.getItem("userid") }).then(response => {
+                    this.tableData3 = response.data.data.applications.applications
+                    console.log(this.tableData3);
+                    return
+                }).catch(error => {
+                    console.log(error)
+                    return this.$message.error('系统内部内部错误');
+                })
+            this.Isclick = false
+            this.Isclick2 = false
+            this.Isclick3 = true
+            this.Isclick5 = false
+        },
+        GmemberManage() {//群成员管理
+            this.Isclick = false
+            this.Isclick2 = false
+            this.Isclick5 = true
+        },
+        handleEnterGNandDesc() {//修改群名以及群公告
+            this.$http.post('http://192.168.2.172:8070/UpdateGroupInfo', { group_id: this.groupInfo.group_id, group_name: this.groupInfo.group_name, description: this.groupInfo.description })
+                .then(response => {
+                    // 处理请求成功的响应
+                    console.log(response.data);
+                    return this.$message.success('操作成功');
+                })
+                .catch(error => {
+                    // 处理请求错误
+                    console.error(error);
+                    return this.$message.error('操作失败');
+                });
+        },
+        DissolveGroup() {//解散群聊
+            this.$http.post('http://192.168.2.172:8070/DissolveGroupInfo', { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id })
+                .then(response => {
+                    // 处理请求成功的响应
+                    console.log(response.data);
+                    return this.$message.success('操作成功');
+                })
+                .catch(error => {
+                    // 处理请求错误
+                    console.error(error);
+                    return this.$message.error('操作失败');
+                });
+        },
+        QuitGroup() {//退群
+            this.$http.post('http://192.168.2.172:8070/QuitGroup', { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id })
+                .then(response => {
+                    // 处理请求成功的响应
+                    console.log(response.data);
+                    return this.$message.success('退群成功');
+                })
+                .catch(error => {
+                    // 处理请求错误
+                    console.error(error);
+                    return this.$message.error('操作失败');
+                });
+        },
+        handleSelectChangeG() {//群通知改变 的处理函数
+            if (this.select_value2 == '选项1') {
+                this.ChangeGNotice6()
+            } else if (this.select_value2 == '选项2') {
+                this.ChangeGNotice7()
+            } else {
+                this.ChangeGNotice8()
+            }
+        },
+        ChangeGNotice6() {//修改群备注
+            this.$http.post('http://192.168.2.172:8070/SetWhiteList', { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id })
+                .then(response => {
+                    // 处理请求成功的响应
+                    console.log(response.data);
+                    return this.$message.success('操作成功');
+                })
+                .catch(error => {
+                    // 处理请求错误
+                    console.error(error);
+                    return this.$message.error('操作失败');
+                });
+        },
+        ChangeGNotice7() {
+            this.$http.post('http://192.168.2.172:8070/SetGrayList', { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id })
+                .then(response => {
+                    // 处理请求成功的响应
+                    console.log(response.data);
+                    return this.$message.success('操作成功');
+                })
+                .catch(error => {
+                    // 处理请求错误
+                    console.error(error);
+                    return this.$message.error('操作失败');
+                });
+        },
+        ChangeGNotice8() {
+            this.$http.post('http://192.168.2.172:8070/SetBlackList', { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id })
+                .then(response => {
+                    // 处理请求成功的响应
+                    console.log(response.data);
+                    return this.$message.success('操作成功');
+                })
+                .catch(error => {
+                    // 处理请求错误
+                    console.error(error);
+                    return this.$message.error('操作失败');
+                });
+        },
+        handleEnterG() {//群聊详备注框回车触发事件
+            this.$refs.inputNotesG.blur(); // 让输入框失去焦点
+            this.UpdataRemarkG()
+        },
+        async UpdataRemarkG() {//更新群聊备注
+            await this.$http.post('http://192.168.2.172:8070/SetGroupName',
+                { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id, group_name: this.groupInfo.my_group_name }).then(response => {
+                    console.log(response.data)
+                    return this.$message.success('更新成功');
+                }).catch(error => {
+                    console.log(error)
+                    return this.$message.error('更新失败');
+                })
+        },
+        handleSwitchChange2() {
+            if (this.status2 === true) {
+                this.SetPrivateChatBlack()
+            } else {
+                this.UnBlockPrivateChat()
+            }
+        },
+        handleSwitchChange1() {
+            if (this.status1 === true) {
+                this.SetFriendCircleBlack()
+            } else {
+                this.UnBlockFriendCircle()
+            }
+        },
+        SetPrivateChatBlack() {//私聊拉黑
+            this.$http.post('http://192.168.2.172:8070/setPrivateChatBlack',
+                { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id }).then(response => {
+                    console.log(response.data);
+                    return this.$message.success('拉黑成功');
+                }).catch(error => {
+                    console.log(error)
+                    this.status2 = false
+                    return this.$message.error('系统内部内部错误');
+                })
+        },
+        UnBlockPrivateChat() {//解除拉黑
+            this.$http.post('http://192.168.2.172:8070/unBlockPrivateChat',
+                { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id }).then(response => {
+                    console.log(response.data);
+                    return this.$message.success('解除拉黑成功');
+                }).catch(error => {
+                    console.log(error)
+                    this.status2 = true
+                    return this.$message.error('系统内部内部错误');
+                })
+        },
+        SetFriendCircleBlack() {//不看他朋友圈
+            this.$http.post('http://192.168.2.172:8070/setFriendCircleBlack',
+                { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id }).then(response => {
+                    console.log(response.data);
+                    return this.$message.success('操作成功，将不展示他（她）的朋友圈');
+                }).catch(error => {
+                    console.log(error)
+                    this.status1 = false
+                    return this.$message.error('系统内部内部错误');
+                })
+        },
+        UnBlockFriendCircle() {//解除 不看他朋友圈
+            this.$http.post('http://192.168.2.172:8070/unBlockFriendCircle',
+                { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id }).then(response => {
+                    console.log(response.data);
+                    return this.$message.success('解除成功');
+                }).catch(error => {
+                    console.log(error)
+                    this.status1 = true
+                    return this.$message.error('系统内部内部错误');
+                })
+        },
+        Del() {
+            this.$http.post('http://192.168.2.172:8070/deleteFriend',
+                { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id }).then(response => {
+                    return this.$message.success('删除成功');
+                }).catch(error => {
+                    console.log(error)
+                    return this.$message.error('系统错误');
+                })
+        },
+        removeTag(index, tag) {
+            // 根据索引从标签数组中移除标签
+            this.formcon.tags.splice(index, 1);
+        },
+        async addTag() {
+            // 添加输入框中的标签到标签数组
+            if (this.newTag.trim() !== '') {
+                this.formcon.tags.push(this.newTag.trim());
+                await this.$http.post('http://192.168.2.172:8070/addFriendTag', { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id, tag: this.newTag })
+                    .then(response => {
+                        // 处理请求成功的响应
+                        someAsyncFunction(() => {
+                            this.formcon.tags.push(newTag);
+                        });
+                        console.log(response.data);
+                    })
+                    .catch(error => {
+                        // 处理请求错误
+                        console.error(error);
+                    });
+                console.log(this.formcon.tags)
+                this.newTag = ''; // 清空输入框
+            }
+        },
+        handleTagHover(index, isHovered) {
+            this.isTagHovered = isHovered ? index : null;
+        },
+        handleSelectChange() {//消息改变处理函数
+            this.$http.post('http://192.168.2.172:8070/setPrivateChatGray', { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id })
+                .then(response => {
+                    // 处理请求成功的响应
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    // 处理请求错误
+                    console.error(error);
+                });
+        },
+        handleEnter() {//更新备注
+            this.$refs.inputNotes.blur(); // 让输入框失去焦点
+            console.log(window.sessionStorage.getItem("userid"))
+            console.log(this.info.user_id)
+            console.log(this.formcon.notes)
+            this.UpdataRemark()
+        },
+        async UpdataRemark() {//更新备注
+            await this.$http.post('http://192.168.2.172:8070/setFriendRemark',
+                { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id, remark: this.formcon.notes }).then(response => {
+                    return this.$message.success('更新成功');
+                }).catch(error => {
+                    console.log(error)
+                    return this.$message.error('更新失败');
+                })
+        },
         get_identify(num) {
             if (num == 2) {
                 return { name: "群主", status: "warning" }
@@ -370,7 +737,7 @@ export default {
             } else if (type == true || type == 7) {
                 return "接收但是不提醒"
             } else if (type == 8) {
-                return "不接收消息"
+                return "屏蔽该群"
             }
         },
         async toggleHighlight(userId) {//高亮显示好友，点击获取好友详细信息，消息通知下拉内容已选项禁用，切换main内容卡片
@@ -378,17 +745,18 @@ export default {
             this.ClearData()
             window.sessionStorage.setItem("contactor_id", userId)
             const info = this.List.find(item => item.friend_id === userId)
-            const form = {
+            const fform = {
                 "user_id": window.sessionStorage.getItem("userid"),
                 "friend_id": info.friend_id
             }
-            await this.$http.post('http://192.168.2.172:8070/queryFriendInfo', form).then(response => {
+            await this.$http.post('http://192.168.2.172:8070/queryFriendInfo', fform).then(response => {
                 this.info = response.data.data.friend_info
-                this.form.notes = response.data.data.friend_info.remark
-                this.form.signature = response.data.data.friend_info.signature === '' ? '无' : response.data.data.friend_info.signature
-                this.form.status = response.data.data.friend_info.status
-                this.form.tags = response.data.data.friend_info.tags === null ? '无' : response.data.data.friend_info.tags
-                console.log(this.info)
+                this.formcon.notes = response.data.data.friend_info.remark
+                this.formcon.signature = response.data.data.friend_info.signature === '' ? '无' : response.data.data.friend_info.signature
+                this.formcon.status = response.data.data.friend_info.status
+                this.formcon.tags.push(response.data.data.friend_info.tags === null ? '无' : response.data.data.friend_info.tags)
+                console.log(this.formcon.tags[0])
+
             }).catch(error => {
                 console.log(error)
                 return this.$message.error('网络错误');
@@ -418,11 +786,13 @@ export default {
                 console.log(error)
                 return this.$message.error('网络错误');
             })
+            this.IsGO = this.groupInfo.owner_id === window.sessionStorage.getItem("userid") ? true : false
+            console.log(this.IsGO)
             if (this.groupInfo.msg_type == 6) {
                 this.options2[0].disabled = true
                 this.options2[1].disabled = false
                 this.options2[2].disabled = false
-            } else if (this.info.msg_type == 7) {
+            } else if (this.groupInfo.msg_type == 7) {
                 this.options2[0].disabled = false
                 this.options2[1].disabled = true
                 this.options2[2].disabled = false
@@ -430,11 +800,9 @@ export default {
                 this.options2[0].disabled = false
                 this.options2[1].disabled = false
                 this.options2[2].disabled = true
-            } true
+            }
             this.Isclick = false
             this.Isclick2 = true
-            const { data: res } = await this.$http.post("http://192.168.2.172:8070/QueryGroupInfo", { group_id: id })
-            this.groupInfo = res.data
         },
         JumpChat() {
             this.index1 = window.sessionStorage.getItem("msg")
@@ -453,8 +821,7 @@ export default {
             // this.List = [],
             // this.avator = '',
             this.info = {},
-                this.form = {}
-            this.groupInfo = {}
+                this.groupInfo = {}
         }
     },
     created() {
@@ -464,7 +831,7 @@ export default {
     },
     computed: {
         getStatusText() {
-            switch (this.form.status) {
+            switch (this.formcon.status) {
                 case 0:
                     return '离线';
                 case 1:
@@ -480,8 +847,28 @@ export default {
 </script>
 
 <style scoped>
+.hoverable .el-tag__close {
+    display: none;
+    margin-left: 20PX;
+}
+
+.hoverable:hover .el-tag__close {
+    display: inline-block;
+}
+
 .img {
     width: 130px;
+}
+
+.infoG {
+    margin-right: 20px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-gap: 20px;
+}
+
+infoG>>>.el-textarea__inner {
+    border: 0;
 }
 
 .info {
@@ -495,6 +882,7 @@ export default {
 .input-container {
     display: flex;
     align-items: center;
+    flex-direction: row;
 }
 
 .input-container> :not(:last-child) {
@@ -692,8 +1080,15 @@ export default {
 }
 
 .bottom_div {
+    width: 100%;
     display: flex;
+    justify-content: space-between;
+}
 
+.button-wrapper {
+    flex: 1;
+    width: 100%;
+    height: 100%;
 }
 
 /* button {
