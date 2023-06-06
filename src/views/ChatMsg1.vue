@@ -66,15 +66,6 @@ export default {
   },
   data() {
     return {
-      msg: {
-        id: "",
-        content: "", // 消息内容
-        time: "",
-        send_id: "",
-        receive_id: "",
-        type: "", // 消息类型，例如 'image'
-        imageSrc: "" // 图片消息的 URL
-      },
       user: {
         id: '',
         username: '123456',
@@ -90,24 +81,13 @@ export default {
       otheravatar: '',
       userId: '',
       contactorId: '',
-      send_message: {
-        id: "",
-        content: "", // 消息内容
-        time: "", // 消息时间
-        send_id: "",
-        receive_id: "",
-        type: "", // 消息类型，例如 'image'
-        imageSrc: "" // 图片消息的 URL
-        // id: '',
-        // context: ' ',
-        // time: '',
-        // send_id: '',
-        // receive_id: '',
-        // type: '1',
-      }
     };
   },
   methods: {
+    get_remark(){
+      const targetObj2 = this.$store.state.contactor_list.find(obj => obj.friend_id === this.contactorId)
+      this.user.remark=targetObj2.name
+    },
     get_history_msg() {
       
     },
@@ -157,7 +137,8 @@ export default {
         time: this.getCurrentTime(),
         send_id: this.userId,
         receive_id: this.contactorId,
-        type: '1',
+        type: 0,
+        msg_type:0    
       });
       this.$store.commit('addMessageLocal', this.messages);
       this.$getWebSocket().send(JSON.stringify(this.messages[this.messages.length - 1]))
@@ -183,7 +164,7 @@ export default {
     }
 
     this.$store.commit('inspectMsg', this.contactorId);
-
+    this.get_remark()
   },
 
 };

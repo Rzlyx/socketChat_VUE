@@ -114,7 +114,7 @@ export default {
         },
         async Submit() {
             try {
-                const response = await this.$http.post('http://192.168.1.222:8070/addFriend', this.form);
+                const response = await this.$http.post('http://192.168.208:8070/addFriend', this.form);
                 if (response.data.code !== 1000) {
                     return this.$message.error('添加失败');
                 }
@@ -136,7 +136,7 @@ export default {
         async searchGroup() {// 搜索群聊,查看群信息
             console.log("测试2")
             console.log(Number(this.searchG))
-            await this.$http.post('http://192.168.1.222:8070/QueryGroupInfo', { group_id: Number(this.searchG) }).then(response => {
+            await this.$http.post('http://192.168.2.172:8070/QueryGroupInfo', { group_id: this.searchG}).then(response => {
                 this.searchGmsg = response.data.data
                 console.log(this.searchGmsg)
             }).catch(error => {
@@ -151,7 +151,7 @@ export default {
             this.dialogVisible2 = false
             console.log('此处发送http请求')
             console.log(this.tableData[0])
-            // this.$http.post('http://192.168.1.222:8070/group_id', this.applyfrom).then(response => {
+            // this.$http.post('http://192.168.2.172:8070/group_id', this.applyfrom).then(response => {
             //     if (response.data.code !== 1000) {
             //         return this.$message.error('发送加群信息失败');
             //     }
@@ -164,7 +164,7 @@ export default {
     created() {
         this.my_frinds_list = this.$store.state.my_friends_list
         console.log(this.my_frinds_list)
-        // const response = this.$http.post('http://192.168.1.222:8070/queryGroupApply', window.sessionStorage.getItem("userid"));
+        // const response = this.$http.post('http://192.168.2.172:8070/queryGroupApply', window.sessionStorage.getItem("userid"));
         // if (response.data.code !== 1000) {
         //     return this.$message.error('获取信息失败');
         // }

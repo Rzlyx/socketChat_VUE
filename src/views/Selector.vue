@@ -153,6 +153,7 @@
 export default {
   data() {
     return {
+      isCollapse:true,
       url1: "msg_user",
       url2: "userlist",
       url3: "momentlist",
