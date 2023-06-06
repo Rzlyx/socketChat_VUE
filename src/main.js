@@ -58,9 +58,8 @@ new Vue({
   render: h => h(App),
   created() {
     window.sessionStorage.removeItem("token");
-
+    // 登录成功的事件
     this.$root.$on('loginSuccess', async () => {
-      tryReconnectWebSocket();
       const id = window.sessionStorage.getItem("userid");
       const { data: res } = await this.$http.post("http://127.0.0.1:8070/queryFriendList", { user_id: id });
       this.$store.commit('updateContactList', res.data.friend_list.friends);
@@ -73,9 +72,13 @@ new Vue({
       
 
       
+
+      const { data: resG } = await this.$http.post("http://192.168.2.172:8070/QueryGroupList", { user_id: id });
+      this.$store.commit('updateGList', resG.data)
+      // tryReconnectWebSocket();
     });
 
-    tryReconnectWebSocket();
+    // tryReconnectWebSocket();
   },
   beforeDestroy() {
 

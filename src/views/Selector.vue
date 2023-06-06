@@ -3,11 +3,18 @@
     <el-aside width="65px">
       <div class="container">
         <div class="column1">
-          <el-image :src="url" @click="GotoPersonalInfo()"></el-image>
           <div>
-           
-            <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
-
+            <img class="avatar" :src="url" @click="toggleInfo">
+            <!-- <el-image :src="url" :preview-src-list="srcList"></el-image> -->
+            <div v-if="isShowInfo" class="info-container" @click="toggleInfo">
+              <img class="avatar" :src="info.avatar">
+              <div class="name">{{ info.name }}</div>
+              <div class="email">{{ info.email }}</div>
+            </div>
+          </div>
+          <div>
+            <el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
+              :collapse="isCollapse">
 
               <el-menu-item :index=url1 @click="goto_msg_user">
                 <el-badge :value=msg_value class="item" :hidden="msg_visable">
@@ -15,8 +22,6 @@
                 </el-badge>
                 <span slot="title">消息</span>
               </el-menu-item>
-
-
 
               <el-menu-item :index=url2 @click="goto_contactor">
                 <el-badge :value=user_value class="item" :hidden="user_visable">
@@ -31,7 +36,6 @@
                 </el-badge>
                 <span slot="title">朋友圈</span>
               </el-menu-item>
-
 
               <el-menu-item :index=url4 @click="goto_collection">
                 <el-badge :value=moment_value class="item" :hidden="moment_visable">
@@ -49,7 +53,7 @@
       </div>
     </el-aside>
 
-    <el-main>
+    <el-main :style="mainStyle">
       <router-view></router-view>
     </el-main>
   </el-container>
@@ -98,6 +102,52 @@
   flex: 1;
   padding: 2px;
 }
+
+.avatar {
+  /* position: absolute; */
+  bottom: 10px;
+  right: 10px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  cursor: pointer;
+}
+
+.avatar:hover {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.info-container {
+  /* position: absolute; */
+  top: calc(100% + 15px);
+  left: 50%;
+  transform: translate(-50%, 0);
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  width: 300px;
+  line-height: 1.5;
+}
+
+.info-container img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  margin-bottom: 8px;
+}
+
+.info-container .name {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.info-container .email {
+  font-size: 16px;
+  color: #666;
+}
 </style>
 <script>
 export default {
@@ -114,8 +164,18 @@ export default {
       user_value: 0,
       // 动态个数
       moment_value: 0,
-
       isCollapse: true,
+
+      username: 'John Doe',
+      url: 'https://picsum.photos/800/600',
+      srcList: ['https://picsum.photos/800/600'],
+      isShowInfo: false,
+      info: {
+        name: 'John Doe',
+        email: 'john@example.com',
+        avatar: 'https://picsum.photos/800/600'
+      },
+
       url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
       srcList: [
         'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg'
@@ -144,14 +204,37 @@ export default {
       }
       this.$router.replace('/contactor')
     },
-    GotoPersonalInfo() {
-      this.$router.push('/infomation')
-    },
     goto_moment() {
       this.$router.push('/moment')
     },
     goto_collection() {
       this.$router.push('/collection')
+    },
+
+    showInfo() {
+      if (this.showInfo) {
+        this.hideInfo();
+      } else {
+        const avatar = this.$el.querySelector('.avatar');
+        const rect = avatar.getBoundingClientRect();
+        const container = this.$el.querySelector('.info-container');
+        container.style.top = `${rect.bottom}px`;
+        container.style.left = `${rect.left + (rect.right - rect.left) / 2}px`;
+        container.style.transform = 'translate(-50%, -50%)';
+        this.showInfo = true;
+      }
+    },
+    toggleInfo() {
+      this.isShowInfo = !this.isShowInfo;
+    },
+
+
+  },
+  computed: {
+    mainStyle() {
+      return {
+        width: this.isShowInfo ? '0' : '100%'
+      };
     }
   },
   watch: {
