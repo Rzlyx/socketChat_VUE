@@ -67,7 +67,6 @@ new Vue({
       this.$store.commit('updateContactList', res.data.friend_list.friends);
 
       const { data: res2 } = await this.$http.post('http://192.168.2.220:8070/queryContactorList', {user_id:id});
-      
       this.$store.commit('get_msg_user',res2.data.contactor_list.contactor_list)
       
       const { data: resG } = await this.$http.post("http://192.168.2.220:8070/QueryGroupList", { user_id: id });

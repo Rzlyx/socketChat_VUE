@@ -48,7 +48,7 @@ export default {
             this.$refs.form.validate(async valid => {
                 if (!valid) return;
                 alert
-                const { data: res } = await this.$http.post('http://192.168.2.172:8080/register', this.form);
+                const { data: res } = await this.$http.post('http://192.168.2.220:8080/register', this.form);
                 console.log(res.msg);
                 if (res.code !== 1000) return this.$message.error('注册失败');
                 this.$message.success('注册成功');
