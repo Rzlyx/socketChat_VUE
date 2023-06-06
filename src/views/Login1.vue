@@ -77,7 +77,7 @@ export default {
             });
         },
         async auto_login() {
-            const { data: res } = await this.$http.post('http://192.168.2.220:8070/login', this.form);
+            const { data: res } = await this.$http.post('http://192.168.2.172:8070/login', this.form);
             if (res.code !== 1000) return "false"
             window.sessionStorage.setItem("token", res.data.token);
             window.sessionStorage.setItem("userid", res.data.id);
