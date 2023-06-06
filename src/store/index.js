@@ -179,7 +179,7 @@ const store = new Vuex.Store({
             name: user.name,
             new_msg: user.message,
             time: user.time,
-            picture: "http://192.168.1.208:8070/getPhotoByID/" + user.id,
+            picture: "http://127.0.0.1:8070/getPhotoByID/" + user.id,
             highlighted: highlighted,
             num: num
           };
@@ -232,6 +232,8 @@ const store = new Vuex.Store({
 
 
     async addMessageReceive(context, message) {
+
+      //获取当前联系人的id，判断当前message里是否存在这个联系人
       const send_id = message.send_id
       if (context.message[send_id]) {
         context.message[send_id].push(message);
@@ -240,15 +242,16 @@ const store = new Vuex.Store({
       }
 
       const contactor_id = window.sessionStorage.getItem('contactor_id')
-      
+      //在mgs_user里找到对应的联系人
       const targetObj = context.user_list.find(obj => obj.id === send_id)
+      //如果找到了
       if (targetObj) {
-        
+           //如果我当前的页面就是这个联系人，只将最新消息赋给
         if (contactor_id == message.send_id) {
           targetObj.new_msg = message.context
           targetObj.time = message.time
         }
-        else {
+        else {//如果当前页面不是这个联系人，那就是把气泡加一
           targetObj.new_msg = message.context
           targetObj.num++
          
@@ -257,7 +260,7 @@ const store = new Vuex.Store({
 
           context.MsgSum++
         }
-      } else {
+      } else {//如果没找到，构建一个新的对象塞进去
         const targetObj2 = context.contactor_list.find(obj => obj.friend_id === send_id)
         console.log(targetObj2)
         context.user_list.push({
@@ -265,7 +268,7 @@ const store = new Vuex.Store({
           "name": targetObj2.name,
           "new_msg": message.context,
           "time": message.time,
-          "picture": 'http://192.168.1.208:8070/getPhotoByID/'+send_id,
+          "picture": 'http://127.0.0.1:8070/getPhotoByID/'+send_id,
           "highlighted": false,
           "num": 1
         })
@@ -279,7 +282,7 @@ const store = new Vuex.Store({
   actions: {
     async update_msg_user(context) {
       try {
-        const { data: res } = await axios.post('http://192.168.1.208:8070/setContactorList', context.state.user_list);
+        const { data: res } = await axios.post('http://127.0.0.1:8070/setContactorList', context.state.user_list);
         // 处理响应数据或其他操作
         if (res.code === 1000) {
           console.log("更新成功")
@@ -290,7 +293,7 @@ const store = new Vuex.Store({
     },
     async get_user_info(context,id) {
       try {
-        const { data: res } = await axios.post('http://192.168.1.208:8070/queryUserInfo', {user_id:id});
+        const { data: res } = await axios.post('http://127.0.0.1:8070/queryUserInfo', {user_id:id});
         // 处理响应数据或其他操作
         if (res.code === 1000) {
           context.tem_name=res.data.user_info.user_name

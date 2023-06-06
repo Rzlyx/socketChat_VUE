@@ -79,7 +79,7 @@ export default {
       // ...
 
       // 建立WebSocket连接
-      this.socket = new WebSocket('ws://192.168.1.208:8080/ws/'+"123456987");
+      this.socket = new WebSocket('ws://127.0.0.1:8080/ws/'+"123456987");
       this.socket.onopen = () => {
         console.log('WebSocket connection opened');
       };
