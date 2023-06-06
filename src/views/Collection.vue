@@ -53,6 +53,9 @@ export default {
   mounted() {
     // 获取列表元素宽度
     this.listWidth = this.$refs.imageList.offsetWidth
+  },
+  created(){
+    window.sessionStorage.setItem("contactor_id", "")
   }
 }
 </script>

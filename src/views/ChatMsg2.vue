@@ -10,7 +10,7 @@
         <img :src="avatar" alt="Avatar" class="avatar" v-if="message.send_id !== userId">
         <div class="message-wrapper" :class="message.send_id === userId ? 'me' : 'other'">
           <div class="message" :class="message.send_id === userId ? 'me' : 'other'">
-            <template v-if="message.type === 'image'">
+            <template v-if="message.type === 1">
               <img :src="message.imageSrc" class="message-image" alt="Image">
             </template>
             <template v-else>
@@ -45,7 +45,7 @@
       &nbsp; &nbsp;
       <div @click="get_history_msg()">
         <el-tooltip class="item" effect="dark" content="历史消息" placement="top">
-          <i class="el-icon-timer"></i>
+          <i class="el-icon-timer" @click="drawer = true"></i>
         </el-tooltip>
       </div>
     </div>
@@ -53,6 +53,20 @@
       <input type="text" v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type your message here...">
       <button class="send-btn" @click="sendMessage">Send</button>
     </div>
+    <el-drawer title="我是标题" :visible.sync="drawer" :with-header="false" size="40%">
+      <div class="block" style="height: 100%;">
+        <el-date-picker v-model="value2" type="datetimerange" :picker-options="pickerOptions" range-separator="至"
+          start-placeholder="开始日期" end-placeholder="结束日期" align="right" @change="showTime()"  value-format="yyyy-MM-dd hh:mm:ss">
+        </el-date-picker>
+        <div class="history_msg">
+          <div class="history_msg_item" v-for="item in history_msg_list" :key="item.id">
+            <div class="history_msg_info">{{ item.name }} &nbsp; {{ item.time }}</div>
+            <div class="history_msg_context">{{ item.context }}</div>
+          </div>
+          
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
     
@@ -66,10 +80,123 @@ export default {
   },
   data() {
     return {
+      history_msg_list:[
+        {
+          id:"1",
+          msg_type:'2',
+          context:"今晚吃什么？？？？",
+          time:'2023-05-15 15:16:45',
+          send_id:"43234",
+          receive_id:'45354',
+          type:'1',
+        },
+        {
+          id:"2",
+          msg_type:'2',
+          context:"今晚吃什么？？？？",
+          time:'2023-05-15 15:16:45',
+          send_id:"43234",
+          receive_id:'45354',
+          type:'1',
+        },
+        {
+          id:"3",
+          msg_type:'2',
+          context:"今晚吃什么？？？？",
+          time:'2023-05-15 15:16:45',
+          send_id:"43234",
+          receive_id:'45354',
+          type:'1',
+        },
+        {
+          id:"4",
+          msg_type:'2',
+          context:"今晚吃什么？？？？",
+          time:'2023-05-15 15:16:45',
+          send_id:"43234",
+          receive_id:'45354',
+          type:'1',
+        },
+        {
+          id:"5",
+          msg_type:'2',
+          context:"今晚吃什么？？？？",
+          time:'2023-05-15 15:16:45',
+          send_id:"43234",
+          receive_id:'45354',
+          type:'1',
+        },
+        {
+          id:"6",
+          msg_type:'2',
+          context:"今晚吃什么？？？？",
+          time:'2023-05-15 15:16:45',
+          send_id:"43234",
+          receive_id:'45354',
+          type:'1',
+        },
+        {
+          id:"7",
+          msg_type:'2',
+          context:"今晚吃什么？？？？",
+          time:'2023-05-15 15:16:45',
+          send_id:"43234",
+          receive_id:'45354',
+          type:'1',
+        },
+        {
+          id:"8",
+          msg_type:'2',
+          context:"今晚吃什么？？？？",
+          time:'2023-05-15 15:16:45',
+          send_id:"43234",
+          receive_id:'45354',
+          type:'1',
+        },
+        {
+          id:"9",
+          msg_type:'2',
+          context:"今晚吃什么？？？？",
+          time:'2023-05-15 15:16:45',
+          send_id:"43234",
+          receive_id:'45354',
+          type:'1',
+        },
+      ],
+      pickerOptions: {
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
+        },
+        value2: '',
+      
+      drawer: false,
       user: {
         id: '',
         username: '123456',
-        remark: '郑杰',
+        remark: '',
         identif: 1,
         picture: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
       },
@@ -84,14 +211,17 @@ export default {
     };
   },
   methods: {
-    get_remark(){
+    showTime(){
+
+    },
+    get_remark() {
       const targetObj2 = this.$store.state.contactor_list.find(obj => obj.friend_id === this.contactorId)
-      this.user.remark=targetObj2.name
+      this.user.remark = targetObj2.name
     },
     get_history_msg() {
-      
+
     },
-    video_chat(){
+    video_chat() {
       this.$router.push('/video_chat')
     },
     getCurrentTime() {
@@ -138,7 +268,7 @@ export default {
         send_id: this.userId,
         receive_id: this.contactorId,
         type: 0,
-        msg_type:0    
+        msg_type: 0
       });
       this.$store.commit('addMessageLocal', this.messages);
       this.$getWebSocket().send(JSON.stringify(this.messages[this.messages.length - 1]))
@@ -155,6 +285,7 @@ export default {
   mounted() {
   },
   created() {
+    
     //获取数据
     this.userId = window.sessionStorage.getItem("userid"),
       this.contactorId = this.$route.params.userId
@@ -171,6 +302,21 @@ export default {
 </script>
     
 <style scoped>
+.history_msg_info{
+  font-size: 10px;
+  color: #64b5f6;
+}
+.history_msg_item{
+  width: 100%;
+  margin-top: 5px;
+}
+.history_msg{
+  width: 88%;
+  height: 85%;
+  background-color: #ccc;
+  margin-left: 6%;
+  margin-top: 8px;
+}
 .el-icon-picture-outline:hover {
   cursor: pointer;
   color: blue;

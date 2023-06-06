@@ -258,54 +258,53 @@
 export default {
     data() {
         return {
-            group_identify: 2,
+            group_identify: 1,
             tableData: [
             ],
             status1: false,
             status2: false,
-            group_identify:2,
             tableData: [{
                 date: '2016-05-02',
                 identity: 2,
                 name: '王小虎',
                 status: true,
-                address: '上海市普陀区金沙江路 1518 弄'
+                online:0
             }, {
                 date: '2016-05-02',
                 identity: 1,
                 name: '王小虎',
                 status: true,
-                address: '上海市普陀区金沙江路 1518 弄'
+                online: 1
             }, {
                 date: '2016-05-02',
                 identity: 0,
                 name: '王小虎',
                 status: true,
-                address: '上海市普陀区金沙江路 1518 弄'
+                online: 0
             }, {
                 date: '2016-05-02',
                 identity: 0,
                 name: '王小虎',
                 status: true,
-                address: '上海市普陀区金沙江路 1518 弄'
+                online: 1
             }, {
                 date: '2016-05-02',
                 identity: 0,
                 name: '王小虎',
                 status: true,
-                address: '上海市普陀区金沙江路 1518 弄'
+                online: 0
             }, {
                 date: '2016-05-02',
                 identity: 0,
                 name: '王小虎',
                 status: true,
-                address: '上海市普陀区金沙江路 1518 弄'
+                online: 1
             }, {
                 date: '2016-05-02',
                 identity: 0,
                 name: '王小虎',
                 status: true,
-                address: '上海市普陀区金沙江路 1518 弄'
+                online: 0
             },],
             status1: true,
             status2: true,
@@ -377,7 +376,7 @@ export default {
         async get_group_user_list(group_id) {
             group_id = '2172635274176102400'
             var id = window.sessionStorage.getItem("userid")
-            const { data: res } = await this.$http.post("http://127.0.0.1:8070/GetGroupAllUser", { user_id: id, group_id: group_id })
+            const { data: res } = await this.$http.post("http://192.168.2.220:8070/GetGroupAllUser", { user_id: id, group_id: group_id })
             console.log(res)
             this.tableData = res.data
             this.tableData.sort(function (a, b) {
@@ -397,6 +396,7 @@ export default {
                     }
                 }
             })
+            console.log(this.group_identify)
         },
         get_identify(num) {
             if (num == 2) {
@@ -410,7 +410,7 @@ export default {
         async get_contactor_list() {
             const id = window.sessionStorage.getItem("userid")
             console.log(id)
-            const { data: res } = await this.$http.post("http://127.0.0.1:8070/queryFriendList", { user_id: parseInt(id, 10) });
+            const { data: res } = await this.$http.post("http://192.168.2.220:8070/queryFriendList", { user_id: parseInt(id, 10) });
             setTimeout(() => {
                 console.log(res);
             }, 200);
@@ -510,7 +510,8 @@ export default {
         }
     },
     created() {
-        // this.get_contactor_list()
+        window.sessionStorage.setItem("contactor_id", "")
+         this.get_contactor_list()
         this.List = this.$store.state.contactor_list
         this.my_group_list = this.$store.state.my_group_list
     },

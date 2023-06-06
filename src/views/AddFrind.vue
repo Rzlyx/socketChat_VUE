@@ -73,7 +73,7 @@ export default {
                     return this.$message.error('添加失败');
                 }
                 this.$message.success('添加信息发送成功');
-                console.log(response)
+
                 // this.$root.$emit('AddSuccess');
             } catch (error) {
                 console.error(error);
@@ -82,11 +82,12 @@ export default {
         }
     },
     created() {
+        window.sessionStorage.setItem("contactor_id", "")
         // const response = this.$http.post('http://192.168.2.172:8070/queryFriendApply', window.sessionStorage.getItem("userid"));
         if (response.data.code !== 1000) {
             return this.$message.error('获取信息失败');
         }
-        console.log(response)
+
         this.tableData.name = response.data.applicat_name
         this.tableData.desc = response.data.reason
         this.tableData.status = response.data.status

@@ -2,16 +2,13 @@
     <el-container>
         <el-aside>
             <div class="msg_list_container">
-                <div class="search">
-                    <button @click="get_users">发送</button>
-                </div>
                 <div class="user_list">
                     <div v-for="(user, index) in sortedUserlist" :key="user.id"
                         :class="['user-container', { highlighted: user.id === highlightedUserId }]"
                         @click="toggleHighlight(user.id, index)">
                         <div class="user-container">
                             <div class="user-picture">
-                                <el-badge :value="user.num" class="item" :hidden="user.num === 0">
+                                <el-badge :value="user.num" class="item" :hidden="user.num === 0" :type="user.status">
                                     <img :src="user.picture" alt="用户头像" />
                                 </el-badge>
                             </div>
@@ -66,13 +63,11 @@ export default {
     },
     methods: {
         async get_users() {
-            const { data: res } = await this.$http.post('http://127.0.0.1:8070/queryContactorList', { user_id: "123456" });
-            setTimeout(() => {
-                console.log(res);
-            }, 200);
+            const { data: res } = await this.$http.post('http://192.168.2.220:8070/queryContactorList', { user_id: "123456" });
+            
         },
         async update_user_list() {
-            const { data: res } = await this.$http.post('http://127.0.0.1:8070/setContactorList', this.users);
+            const { data: res } = await this.$http.post('http://192.168.2.220:8070/setContactorList', this.users);
 
         },
         toggleHighlight(userId, index) {
@@ -121,8 +116,9 @@ export default {
 
     },
     created() {
+        window.sessionStorage.setItem("contactor_id", "")
         this.userlist = this.$store.state.user_list
-        console.log(this.userlist)
+
     },
     watch: {
         '$store.state.user_list': {

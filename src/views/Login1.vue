@@ -65,7 +65,7 @@ export default {
         login() {
             this.$refs.form.validate(async valid => {
                 if (!valid) return;
-                const { data: res } = await this.$http.post('http://127.0.0.1:8070/login', this.form);
+                const { data: res } = await this.$http.post('http://192.168.2.220:8070/login', this.form);
                 if (res.code !== 1000) return this.$message.error('登录失败');
                 window.sessionStorage.setItem("token", res.data.token);
                 window.sessionStorage.setItem("userid", res.data.id);
@@ -74,11 +74,10 @@ export default {
                 this.$root.$emit('loginSuccess'); // 触发自定义事件 'loginSuccess'
                 this.$router.replace('/selector');
 
-
             });
         },
         async auto_login() {
-            const { data: res } = await this.$http.post('http://127.0.0.1:8070/login', this.form);
+            const { data: res } = await this.$http.post('http://192.168.2.220:8070/login', this.form);
             if (res.code !== 1000) return "false"
             window.sessionStorage.setItem("token", res.data.token);
             window.sessionStorage.setItem("userid", res.data.id);
@@ -96,6 +95,7 @@ export default {
 
     },
     created() {
+        window.sessionStorage.setItem("contactor_id", "")
         const info = this.retrieveCredentials();
         if (info) {
             this.form.username = info.username;
