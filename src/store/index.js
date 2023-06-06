@@ -193,10 +193,27 @@ const store = new Vuex.Store({
       } else {
         return
       }
-
     },
-
-
+    get_moment_list(state, momentList) {
+      if (Array.isArray(momentList) && momentList.length > 0) {
+        // 循环处理每个朋友圈数据
+        state.momentList = momentList.map(moment => {
+          return {
+            id: moment.id, // 朋友圈ID
+            avatar: moment.user.avatar, // 用户头像
+            username: moment.user.username, // 用户名字
+            content: moment.content, // 朋友圈内容
+            pictures: moment.pictures, // 图片列表
+            time: moment.time, // 发布时间
+            comments: moment.comments, // 评论列表
+            likes: moment.likes, // 点赞列表
+            isLiked: false // 是否已经点赞
+          }
+        })
+      } else {
+        state.momentList = []
+      }
+    },
     momentLikes(state, like_info) {
       const target_moment = state.moment_list[like_info.index]// 第一步：根据传入的 index 取出目标动态对象
       const existing_like = target_moment.likes.find(like => like.id === like_info.id)// 第二步：判断用户是否重复点赞了该动态
@@ -261,12 +278,10 @@ const store = new Vuex.Store({
       }
 
       const contactor_id = window.sessionStorage.getItem('contactor_id')
-      //在mgs_user里找到对应的联系人
       const targetObj = context.user_list.find(obj => obj.id === send_id)
       //如果找到了
 
       if (targetObj) {
-        //如果我当前的页面就是这个联系人，只将最新消息赋给
         if (contactor_id == message.send_id) {
           targetObj.new_msg = message.context
           targetObj.time = message.time
@@ -294,13 +309,13 @@ const store = new Vuex.Store({
           "name": targetObj2.name,
           "new_msg": message.context,
           "time": message.time,
-          "picture": 'http://192.168.2.220:8070/getPhotoByID/' + send_id,
+          "picture": 'http://192.168.1.208:8070/getPhotoByID/' + send_id,
           "highlighted": false,
           "num": 1,  //将这个用户的未读消息设为1
           "status":status
         })
-        
-        
+
+        context.MsgSum++
       }
 
       this.dispatch('update_msg_user');

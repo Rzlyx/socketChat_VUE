@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import 'element-ui/lib/theme-chalk/index.css'
 import { Button,Container,Main,Footer,Form,FormItem,Input,Message,Menu,MenuItem,RadioGroup,RadioButton,
-Submenu,MenuItemGroup,Image,Switch,Badge,Table,TableColumn,Divider,Aside,Avatar,Tooltip,Row,Col,Card,Tag,Select,Option,Dialog,Drawer,Radio,DatePicker,ButtonGroup} from 'element-ui'
+Submenu,MenuItemGroup,Image,Switch,Badge,Table,TableColumn,Divider,Aside,Avatar,Tooltip,Row,Col,Card,Tag,
+Select,Option,Dialog,Drawer,Radio,Checkbox,CheckboxGroup,DatePicker,ButtonGroup} from 'element-ui'
 import Vuelidate from 'vuelidate'
 import vueChatScroll from 'vue-chat-scroll'
 
@@ -38,6 +39,8 @@ Vue.use(Option)
 Vue.use(Dialog)
 Vue.use(Drawer)
 Vue.use(Radio)
+Vue.use(Checkbox)
+Vue.use(CheckboxGroup)
 Vue.use(DatePicker)
 Vue.use(ButtonGroup)
 
