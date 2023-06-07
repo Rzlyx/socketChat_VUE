@@ -53,6 +53,26 @@ const store = new Vuex.Store({
     ],
     //动态列表
     moment_list: [
+
+        // {
+        //   id: "21690096",
+        //   name: "John Doe",
+        //   avator:
+        //     'https://picsum.photos/800/600',
+        //   new_msg: "今天天气不错！",
+        //   time: "2023-06-08T15:30:00",
+        //   picture: [
+          
+        //   ],
+        //   likes: [
+
+        //   ],
+        //   comments: [
+            
+        //   ]
+        // },
+
+
       {
         id: "21690096",
         name: "123456",
@@ -163,6 +183,38 @@ const store = new Vuex.Store({
           }
         ]
       },
+      {
+        id: "654321",
+        name: "郑杰",
+        avator:
+          'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+        new_msg: "结束了！",
+        time: "2023-05-21T14:20:00",
+        picture: [
+          'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
+          'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+          'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+          'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+        ],
+
+        likes: [
+          {
+            id: '12966',
+            name: '小昊'
+          },
+          {
+            id: '43805',
+            name: '小熊'
+          }
+        ],
+        comments: [
+          {
+            id: '29664',
+            name: '小刚',
+            content: '对，结束了！'
+          }
+        ]
+      },
 
     ],
 
@@ -174,10 +226,10 @@ const store = new Vuex.Store({
       var num = 0;
       if (msg_user && Array.isArray(msg_user)) {
         state.user_list = msg_user.map(function (user) {
-          if(user.status==0){
-            var status="danger"
-          }else{
-            var status="info"
+          if (user.status == 0) {
+            var status = "danger"
+          } else {
+            var status = "info"
           }
           return {
             id: user.id,
@@ -187,33 +239,55 @@ const store = new Vuex.Store({
             picture: "http://192.168.2.220:8070/getPhotoByID/" + user.id,
             highlighted: highlighted,
             num: num,
-            status:status
+            status: status
           };
         });
       } else {
         return
       }
     },
-    get_moment_list(state, momentList) {
-      if (Array.isArray(momentList) && momentList.length > 0) {
-        // 循环处理每个朋友圈数据
-        state.momentList = momentList.map(moment => {
-          return {
-            id: moment.id, // 朋友圈ID
-            avatar: moment.user.avatar, // 用户头像
-            username: moment.user.username, // 用户名字
-            content: moment.content, // 朋友圈内容
-            pictures: moment.pictures, // 图片列表
-            time: moment.time, // 发布时间
-            comments: moment.comments, // 评论列表
-            likes: moment.likes, // 点赞列表
-            isLiked: false // 是否已经点赞
-          }
-        })
-      } else {
-        state.momentList = []
-      }
-    },
+    // get_moment_list(state, moment_list) {
+    //   if (Array.isArray(moment_list) && moment_list.length > 0) {
+    //     // 循环处理每个朋友圈数据
+    //     state.moment_list = moment_list.map(momentI => {
+    //       return {
+    //         id: momentI.sender_id,
+    //         name: momentI.sender_name,
+    //         avator: "http://192.168.2.172:8070/getPhotoByID/" + momentI.sender_id,
+    //         new_msg: momentI.news,
+    //         time: momentI.create_time,
+    //         picture: momentI.photo_paths,
+    //         likes: [
+    //           momentI.likes
+    //         ],
+    //         comments: [
+    //           momentI.comments
+    //         ],
+
+    //       };
+    //     });
+    //   } else {
+    //     state.moment_list = []
+    //   }
+    // },
+    // refresh_moment_list(state) {
+    //   fetch('http://192.168.2.220:8070/queryAllFriendCircle', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //       // 可以在这里传递需要的请求参数
+    //     })
+    //   })
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     // 更新 vuex 中的 moment_list
+    //     state.moment_list = data;
+    //   })
+    //   .catch(error => console.error(error));
+    // },
+
     momentLikes(state, like_info) {
       const target_moment = state.moment_list[like_info.index]// 第一步：根据传入的 index 取出目标动态对象
       const existing_like = target_moment.likes.find(like => like.id === like_info.id)// 第二步：判断用户是否重复点赞了该动态
@@ -241,7 +315,7 @@ const store = new Vuex.Store({
       state.my_group_list = listG
     },
     inspectMsg(context, userId) {
-      var id =window.sessionStorage.getItem("userid")
+      var id = window.sessionStorage.getItem("userid")
       const targetObj = context.user_list.find(obj => obj.id === userId)
       var t = targetObj.num
       var contact_id = targetObj.id
@@ -249,7 +323,7 @@ const store = new Vuex.Store({
         user_id: id,
         friend_id: contact_id
       }
-      
+
       this.dispatch('update_msg_readtime', info)
       targetObj.num = 0;
       context.MsgSum -= t
@@ -262,7 +336,7 @@ const store = new Vuex.Store({
       const targetObj = context.user_list.find(obj => obj.id === receive_id)
       targetObj.new_msg = temp_message.context
       targetObj.time = temp_message.time
-      
+
       this.dispatch('update_msg_user');
     },
 
@@ -297,12 +371,12 @@ const store = new Vuex.Store({
         }
       } else {//如果没找到，构建一个新的对象塞进去
         const targetObj2 = context.contactor_list.find(obj => obj.friend_id === send_id)
-        if (message.msg_type==0||message.msg_type==6){
+        if (message.msg_type == 0 || message.msg_type == 6) {
           //如果这个是通知消息，整个未读消息加1
           context.MsgSum++
-          var status=""
-        }else{
-          var status="warning"
+          var status = ""
+        } else {
+          var status = "warning"
         }
         context.user_list.push({
           "id": send_id,
@@ -312,7 +386,7 @@ const store = new Vuex.Store({
           "picture": 'http://192.168.1.208:8070/getPhotoByID/' + send_id,
           "highlighted": false,
           "num": 1,  //将这个用户的未读消息设为1
-          "status":status
+          "status": status
         })
 
         context.MsgSum++
@@ -324,10 +398,10 @@ const store = new Vuex.Store({
   },
   actions: {
     async update_msg_user(context) {
-      var id =window.sessionStorage.getItem("userid")
+      var id = window.sessionStorage.getItem("userid")
       const newContactorList = context.state.user_list.map(user => {
-        if(user.status=="") var new_status=0
-        else                var  new_status=1
+        if (user.status == "") var new_status = 0
+        else var new_status = 1
         return {
           id: user.id,
           new_msg: user.new_msg,
@@ -337,11 +411,11 @@ const store = new Vuex.Store({
         };
       });
       try {
-        const { data: res } = await axios.post('http://192.168.2.220:8070/setContactorList', {user_id:id,contactor_list:newContactorList});
+        const { data: res } = await axios.post('http://192.168.2.220:8070/setContactorList', { user_id: id, contactor_list: newContactorList });
         // 处理响应数据或其他操作
         if (res.code === 1000) {
-        }else{
-          console.log("更新信息失败",res)
+        } else {
+          console.log("更新信息失败", res)
         }
       } catch (error) {
         // 处理错误情况

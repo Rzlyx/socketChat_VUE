@@ -5,7 +5,16 @@
       <button @click="addImage">添加图片</button>
     </div>
     <div class="image-preview">
-      <img v-for="image in images" :src="image" :key="image" />
+      <div class="image-preview">
+        <img v-for="image in images" :src="image" :key="image" />
+      </div>
+      <!-- <el-upload action="http://192.168.2.220:8070/UploadCirclePhoto" list-type="picture-card"
+        :on-preview="handlePictureCardPreview" :on-remove="handleRemove" :auto-upload="false">
+        <i class="el-icon-plus"></i>
+      </el-upload>
+      <el-dialog :visible.sync="dialogVisible">
+        <img width="100%" :src="dialogImageUrl" alt="">
+      </el-dialog> -->
     </div>
     <div class="privacy">
       <div class="privacy-button">
@@ -43,17 +52,19 @@
 </template>
 
 <script>
-
+import axios from 'axios';
 export default {
   data() {
     return {
       content: '',
       images: [],
+      dialogImageUrl: '',
+      dialogVisible: false,
       privacy: 'public', // 默认公开
       drawer: false,
       showUserList: false,// 是否显示用户列表
-      checkedCities: ['上海', '北京'],
-      cities: ['上海', '北京', '广州', '深圳'],
+      checkedCities: [],
+      cities: ['123456', '111111', '任隽延', '郑杰'],
       contactorlist: [
       ],
     }
@@ -85,7 +96,6 @@ export default {
       this.privacy = privacy;
     },
 
-
     async submit() {
       // console.log( this.content.length !=0 && this.images.length ==0)
       const userid = window.sessionStorage.getItem("userid")
@@ -108,7 +118,7 @@ export default {
       try {
         console.log(userid)
         if (type == 1) {
-          const { data } = await this.$http.post('http://192.168.2.220:8070/SendCircle', {
+          const { data } = await this.$http.post('http://192.168.2.172:8070/SendCircle', {
             sender: userid,
             news: this.content,
             type: type,
@@ -122,6 +132,7 @@ export default {
         //   })
         // }
         else if (type == 4) {
+
           const { data: momentData } = await this.$http.post('http://192.168.2.220:8070/SendCircle', {
             sender: userid,
             news: this.content,
@@ -132,14 +143,24 @@ export default {
           console.log('发布成功:', momentData) // 输出成功信息
           var image_id = momentData.data.news_id
 
-          // if (this.images.length != 0) {
+          // const formData = new FormData();
+          // formData.append('news_id', image_id);
+          // this.files.forEach((file) => {
+          //   formData.append('images', file);
+          // });
+
           const { data: imageData } = await this.$http.post('http://192.168.2.220:8070/UploadCirclePhoto', {
             news_id: image_id,
             photo: this.images,
-          })
+          },
+            console.log(222222),
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            }
+          )
           console.log('图片上传成功:', imageData) // 输出成功信息
-
-          // }
 
         }
         // console.log('发布成功:', data) // 输出成功信息
@@ -148,29 +169,6 @@ export default {
         console.error('发布失败:', error) // 输出错误信息
       }
     },
-    // async submit() {
-    //   try {
-    //     const { data } = await this.$http.post('http://192.168.8.220:8070/SendCircle', {
-    //       sender: this.sender,
-    //       news: this.news,
-    //       type: this.type,
-    //       blacklist: this.blacklist,
-    //       circletype: this.circletype,
-    //     })
-    //     console.log('发布成功:', data) // 输出成功信息
-    //     this.$router.back() // 发布成功后返回上一页
-    //   } catch (error) {
-    //     console.error('发布失败:', error) // 输出错误信息
-    //   }
-    // },
-    // async submit() {
-
-    //   // 提交数据到服务器
-    //   // ...
-
-    //   // 发布成功后返回上一页
-    //   this.$router.back();
-    // },
 
     handleCheckedCitiesChange(value) {
       let checkedCount = value.length;

@@ -18,6 +18,7 @@
                             <i style="font-size: 24px" class="el-icon-camera"></i>
                         </router-link>
                     </div>
+                    <!-- {{ formatTime(currentTime) }} -->
                 </div>
 
             </div>
@@ -327,6 +328,16 @@ export default {
             showCommentBox: false,
             commentInput: '',
             showPopover: false,
+            // currentTime: new Date(),
+            moment_num: 5,
+            currentTime: new Date().toLocaleString("zh-CN", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+            }),
 
         };
     },
@@ -336,6 +347,17 @@ export default {
         });
         this.momentlist = JSON.parse(JSON.stringify(this.momentlist));
 
+        setInterval(() => {
+            this.currentTime = new Date().toLocaleString("zh-CN", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+            });
+        }, 1000);
+
     },
 
     computed: {
@@ -343,20 +365,48 @@ export default {
             return this.$store.state.moment_list;
         }
     },
+
+
     methods: {
-        async get_moment_list() {
-            try {
-                const { data } = await this.$http.post('http://192.168.2.220:8070/queryAllFriendCircle',{
-                    user_id: this.user_id,
-                    readtime: this.readtime,
-                    num: this.num,
-                })
-                this.momentlist = data // 将数据存储到组件data中的momentlist中
-            } catch (error) {
-                console.error('获取朋友圈列表失败：', error)
-            }
+        formatTime(currentTime) {
+            const date = new Date(currentTime); // 将时间字符串转换为Date对象
+            const year = date.getFullYear(); // 获取年份
+            const month = (`0${date.getMonth() + 1}`).slice(-2); // 获取月份，并在前面补0
+            const day = (`0${date.getDate()}`).slice(-2); // 获取日期，并在前面补0
+            const hours = (`0${date.getHours()}`).slice(-2); // 获取小时，并在前面补0
+            const minutes = (`0${date.getMinutes()}`).slice(-2); // 获取分钟，并在前面补0
+            const seconds = (`0${date.getSeconds()}`).slice(-2); // 获取秒数，并在前面补0
+            const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`; // 拼接日期和时间字符串
+            return formattedTime; // 返回格式化后的时间
         },
 
+        // async get_moment_list() {
+        //     const userid = window.sessionStorage.getItem("userid")
+        //     try {
+        //         const { data: res } = await this.$http.post('http://192.168.2.172:8070/queryAllFriendCircle', {
+        //             user_id: userid,
+        //             read_time: this.formatTime(currentTime),
+        //             num: this.moment_num,
+        //         })
+        //         this.momentlist = data // 将数据存储到组件data中的momentlist中
+        //         console.log(res.data)
+        //         console.log('获取朋友圈列表成功：', res)
+        //     } catch (error) {
+        //         console.error('获取朋友圈列表失败：', error)
+        //     }
+        //     // this.$store.commit('get_moment_list', data.moment_list);
+        //     // this.momentlist = this.$store.state.moment_list;
+
+        // },
+        // loadMomentList() {
+        //     fetch('/moment/list')
+        //         .then(res => res.json())
+        //         .then(data => {
+        //             // 将获取到的朋友圈信息提交给 Vuex 的 mutation 来更新应用程序状态
+        //             this.$store.commit('get_moment_list', data.moment_list)
+        //         })
+        //         .catch(err => console.error('Failed to fetch moment list:', err))
+        // },
         imageRows(momentI) {
             // 根据行数计算每一行应该展示的图片地址
             const rows = []
@@ -385,7 +435,7 @@ export default {
 
         handleLikeClick(index) {
             const userid = '125345453'   /*window.localStorage.getItem("id")*/
-            const username = '任' /*window.localStorage.getItem("username")*/
+            const username = 'John Doe' /*window.localStorage.getItem("username")*/
             const like_info = {
                 id: userid,
                 name: username,
@@ -397,7 +447,7 @@ export default {
 
         handleCommentSubmit(index) {
             const userid = '12345612'   /*window.localStorage.getItem("id")*/
-            const username = '小任' /*window.localStorage.getItem("username")*/
+            const username = 'John Doe' /*window.localStorage.getItem("username")*/
 
             const comment_info = {
                 id: userid,
@@ -432,7 +482,9 @@ export default {
     },
     created() {
         window.sessionStorage.setItem("contactor_id", "")
-        this.momentlist = this.$store.state.moment_list
+        this.momentlist = this.$store.state.moment_list;
+        // this.$store.commit('refresh_moment_list');
+        this.$store.commit('get_moment_list');
     },
 
 
