@@ -11,7 +11,10 @@
         <div class="message-wrapper" :class="message.send_id === userId ? 'me' : 'other'">
           <div class="message" :class="message.send_id === userId ? 'me' : 'other'">
             <template v-if="message.type === 1">
-              <img :src="url_photo + message.id" class="message-image" alt="Image">
+              <!-- <img :src="url_photo + message.id" class="message-image" alt="Image"> -->
+              <el-image style="width: 110px; height: 150px" :src="url_photo + message.id"
+                :preview-src-list="big_img(url_photo + message.id)">
+              </el-image>
             </template>
             <template v-else>
               {{ message.context }}
@@ -60,13 +63,23 @@
     <el-drawer title="我是标题" :visible.sync="drawer" :with-header="false" size="40%">
       <div class="block" style="height: 100%;">
         <el-date-picker v-model="value2" type="datetimerange" :picker-options="pickerOptions" range-separator="至"
-          start-placeholder="开始日期" end-placeholder="结束日期" align="right" value-format="yyyy-MM-dd hh:mm:ss">
+          start-placeholder="开始日期" end-placeholder="结束日期" align="right" value-format="yyyy-MM-dd HH:mm:ss">
         </el-date-picker>
         <el-button type="primary" @click="get_history_msg">查询</el-button>
         <div class="history_msg">
           <div class="history_msg_item" v-for="item in history_msg_list" :key="item.id">
-            <div class="history_msg_info">{{ item.name }} &nbsp; {{ item.time }}</div>
-            <div class="history_msg_context">{{ item.context }}</div>
+            <div class="history_msg_info">{{ item.send_id == userId ? "我" : user.remark }} &nbsp; {{ item.time }}</div>
+            <div class="message">
+              <template v-if="item.type === 1">
+                <el-image style="width: 110px; height: 150px" :src="url_photo + item.id"
+                  :preview-src-list="big_img(url_photo + item.id)">
+                </el-image>
+              </template>
+              <template v-else>
+                {{ item.context }}
+              </template>
+              <!-- <span class="message-time">{{ message.time }}</span> -->
+            </div>
           </div>
 
         </div>
@@ -89,87 +102,7 @@ export default {
       IsGroup: false,
       url_photo: "http://192.168.2.220:8070/getPhotoByID/",
       history_msg_list: [
-        {
-          id: "1",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
-        {
-          id: "2",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
-        {
-          id: "3",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
-        {
-          id: "4",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
-        {
-          id: "5",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
-        {
-          id: "6",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
-        {
-          id: "7",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
-        {
-          id: "8",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
-        {
-          id: "9",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
+
       ],
       pickerOptions: {
         shortcuts: [{
@@ -229,7 +162,8 @@ export default {
         receive_id: "",
         type: 1,
         msg_type: 0
-      }
+      },
+      contactor_name: '',
     };
   },
   methods: {
@@ -243,6 +177,11 @@ export default {
       }else{
         console.log
       }
+    },
+    big_img(url) {
+      var list = []
+      list.push(url)
+      return list
     },
     pic_success() {
       if(this.IsGroup){
@@ -308,7 +247,8 @@ export default {
         friend_id: this.contactorId
       })
       if (res.code === 1000) {
-        this.history_msg_list = res.message_list.messages
+        this.history_msg_list = res.data.message_list.messages
+        console.log(res.data.message_list.messages)
       } else {
 
       }
@@ -412,10 +352,10 @@ export default {
 </script>
     
 <style scoped>
-.message-image {
+/* .message-image {
   height: 100px;
   width: 60px;
-}
+} */
 
 .history_msg_info {
   font-size: 10px;
@@ -430,7 +370,6 @@ export default {
 .history_msg {
   width: 88%;
   height: 85%;
-  background-color: #ccc;
   margin-left: 6%;
   margin-top: 8px;
 }
