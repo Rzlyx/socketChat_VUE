@@ -196,7 +196,7 @@ const store = new Vuex.Store({
             name: user.name,
             new_msg: user.new_msg,
             time: user.time,
-            picture: "http://192.168.2.172:8070/getPhotoByID/" + user.id,
+            picture: "http://192.168.2.220:8070/getPhotoByID/" + user.id,
             highlighted: highlighted,
             num: num,
             status: status
@@ -277,9 +277,10 @@ const store = new Vuex.Store({
       var temp_message = messages[last]
       const targetObj = context.user_list.find(obj => obj.id === receive_id)
       const target_contact= context.contactor_list.find(obj=>obj.friend_id==receive_id)
-      if (target_contact==null){
+      const target_group= context.my_group_list.find(obj=>obj.group_id==receive_id)
+      if (target_contact==null && target_group == null){
         Message.error("他不是你的联系人")
-        return
+        return false
       }
       if(targetObj==null){
         var info={user_id:temp_message.send_id,friend_id:receive_id}
@@ -316,7 +317,7 @@ const store = new Vuex.Store({
       } else {
         context.message[send_id] = [message];
       }
-
+      console.log(message)
       const contactor_id = window.sessionStorage.getItem('contactor_id')
       const targetObj = context.user_list.find(obj => obj.id === send_id)
       //如果找到了
@@ -349,7 +350,7 @@ const store = new Vuex.Store({
           "name": targetObj2.name,
           "new_msg": message.context,
           "time": message.time,
-          "picture": 'http://192.168.2.172:8070/getPhotoByID/' + send_id,
+          "picture": 'http://192.168.2.220:8070/getPhotoByID/' + send_id,
           "highlighted": false,
           "num": 1,  //将这个用户的未读消息设为1
           "status": status
@@ -376,7 +377,7 @@ const store = new Vuex.Store({
         };
       });
       try {
-        const { data: res } = await axios.post('http://192.168.2.172:8070/setContactorList', {user_id:id,contactor_list:newContactorList});
+        const { data: res } = await axios.post('http://192.168.2.220:8070/setContactorList', {user_id:id,contactor_list:newContactorList});
         // 处理响应数据或其他操作
         if (res.code === 1000) {
         } else {
@@ -388,7 +389,7 @@ const store = new Vuex.Store({
     },
     async get_user_info(context, id) {
       try {
-        const { data: res } = await axios.post('http://192.168.2.172:8070/queryUserInfo', { user_id: id });
+        const { data: res } = await axios.post('http://192.168.2.220:8070/queryUserInfo', { user_id: id });
         // 处理响应数据或其他操作
         if (res.code === 1000) {
           context.tem_name = res.data.user_info.user_name
@@ -400,7 +401,7 @@ const store = new Vuex.Store({
     },
     async update_msg_readtime(context, info) {
       try {
-        const { data: res } = await axios.post('http://192.168.2.172:8070/setReadTime', info);
+        const { data: res } = await axios.post('http://192.168.2.220:8070/setReadTime', info);
         // 处理响应数据或其他操作
         if (res.code === 1000) {
         }
