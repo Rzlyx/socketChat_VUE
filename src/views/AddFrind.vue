@@ -68,7 +68,7 @@ export default {
         },
         async Submit() {
             try {
-                const response = await this.$http.post('http://192.168.2.220:8070/addFriend', this.form);
+                const response = await this.$http.post('http://192.168.2.172:8070/addFriend', this.form);
                 if (response.data.code !== 1000) {
                     return this.$message.error('添加失败');
                 }
@@ -83,7 +83,7 @@ export default {
     },
     created() {
         window.sessionStorage.setItem("contactor_id", "")
-        // const response = this.$http.post('http://192.168.2.220:8070/queryFriendApply', window.sessionStorage.getItem("userid"));
+        // const response = this.$http.post('http://192.168.2.172:8070/queryFriendApply', window.sessionStorage.getItem("userid"));
         if (response.data.code !== 1000) {
             return this.$message.error('获取信息失败');
         }

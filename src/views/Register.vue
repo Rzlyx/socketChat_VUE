@@ -37,11 +37,11 @@ export default {
             form: {
                 username: '李利来',
                 password: '123321',
-                sex:"1",
-                phone_number:'15648598754',
+                sex: "1",
+                phone_number: '15648598754',
                 e_mail: '15648598754@qq.com',
-                signature:'无',
-                birthday:'1998-09-20'
+                signature: '无',
+                birthday: '1998-09-20'
             },
             rules: {
                 username: [
@@ -64,16 +64,16 @@ export default {
             this.$refs.form.validate(async valid => {
                 if (!valid) return;
                 alert
-                const { data: res } = await this.$http.post('http://192.168.2.220:8070/register', 
-                {
-                    username:this.form.username,
-                    password:this.form.password,
-                    sex:Number(this.form.sex),
-                    phone_number:this.form.phone_number,
-                    e_mail:this.form.e_mail,
-                    signature:this.form.signature,
-                    birthday:this.form.birthday,
-                }
+                const { data: res } = await this.$http.post('http://192.168.2.220:8070/register',
+                    {
+                        username: this.form.username,
+                        password: this.form.password,
+                        sex: Number(this.form.sex),
+                        phone_number: this.form.phone_number,
+                        e_mail: this.form.e_mail,
+                        signature: this.form.signature,
+                        birthday: this.form.birthday,
+                    }
                 );
                 console.log(res);
                 if (res.code !== 1000) return this.$message.error('注册失败');
@@ -82,7 +82,7 @@ export default {
             });
         }
     },
-    created(){
+    created() {
         window.sessionStorage.setItem("contactor_id", "")
     }
 }
@@ -119,4 +119,5 @@ export default {
 
 .el-button {
     width: 100%;
-}</style>
+}
+</style>
