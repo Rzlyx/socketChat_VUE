@@ -34,7 +34,7 @@
             </div>
 
             <div class="block1">
-                <div class="lable" @click="$router.push('/addGroup')">
+                <div class="lable" @click="applyG()">
                     <div>
                         <img :src="avator" alt="新的">
                     </div>
@@ -65,7 +65,7 @@
         </div>
         <div class="main">
             <div class="default_picture"
-                v-if="Isclick === false && Isclick2 === false && Isclick3 === false && Isclick5 === false">
+                v-if="Isclick === false && Isclick2 === false && Isclick3 === false && Isclick4 === false && Isclick5 === false">
                 <div class="center">
                     <i class="el-icon-chat-dot-square"></i>
                 </div>
@@ -217,7 +217,7 @@
                             <div style="padding: 14px;">
                                 <div class="bottom_div clearfix">
                                     <div class="button-wrapper" style="margin-left: 30px;"><el-button type="primary"
-                                            size="small" @click="JumpChat()">文字聊天</el-button></div>
+                                            size="small" @click="JumpChatG()">文字聊天</el-button></div>
                                     <div v-if="IsGO" class="button-wrapper"><el-button type="primary" size="small"
                                             @click="GmemberManage()">群成员管理</el-button></div>
                                     <div v-if="IsGO" class="button-wrapper"><el-button type="danger" size="small"
@@ -242,7 +242,8 @@
                     </el-table-column>
                     <el-table-column align="right">
                         <template slot="header" slot-scope="scope">
-                            <el-input v-model="AddsearchF" size="mini" @keyup.native.enter="applyF()" placeholder="新增联系人" />
+                            <el-input v-model="AddsearchF" size="mini" @keyup.native.enter="applyFSearch()"
+                                placeholder="新增联系人" />
                         </template>
                         <template slot-scope="scope">
                             <el-button size="mini" type="primary"
@@ -256,25 +257,119 @@
 
 
             <div class="AfterSearch">
-                <el-dialog :visible.sync="dialogVisibleF" v-if="searchFmsg" width="35%">
-                    <div class="content">
-                        <div class="item item1">{{ searchGmsg.group_name }}</div>
-                        <div class="item item2">{{ searchGmsg.group_id }}</div>
-                        <div class="item item3">{{ searchGmsg.description }}</div>
-                        <div class="item item4">{{ searchGmsg.create_time }}</div>
-
-                    </div>
-
-                    <span slot="footer" class="dialog-footer">
-                        <div style="display:flex">
-                            <el-input v-model="applyfrom.reason" style="margin-right: 10px;" placeholder="输入原因" />
-                            <el-button @click="dialogVisible2 = false, searchG = ''">取 消</el-button>
-                            <el-button type="primary" @click="ApplyAG()">申请入群</el-button>
-                        </div>
-
-                    </span>
+                <el-dialog :visible.sync="dialogVisibleF" v-if="SearchResults" width="35%">
+                    <el-table :data="SearchResults" style="width: 100%">
+                        <el-table-column label="姓名" prop="name">
+                        </el-table-column>
+                        <el-table-column label="账号" prop="id">
+                        </el-table-column>
+                        <el-table-column label="类型" prop="type">
+                            <template slot-scope="scope">
+                                <!-- 在作用域插槽中定义自定义渲染内容 -->
+                                {{ scope.row.type === 0 ? '个人' : '群聊' }}
+                            </template>
+                        </el-table-column>
+                        <el-table-column align="right">
+                            <template slot-scope="scope">
+                                <el-button size="mini" type="success"
+                                    @click="ApplyAddF(scope.$index, scope.row)">详情</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
                 </el-dialog>
             </div>
+
+            <!-- 搜索的详细信息 -->
+            <el-dialog :visible.sync="dialogVisibleFInfo" v-if="SearchResultsInfo" width="45%">
+                <el-table :data="Object.values(SearchResultsInfo)" style="width: 100%">
+                    <el-table-column label="姓名" prop="user_name">
+                    </el-table-column>
+                    <el-table-column label="账号" prop="user_id">
+                    </el-table-column>
+                    <el-table-column label="性别" prop="sex">
+                    </el-table-column>
+                    <el-table-column label="电话" prop="phone_number">
+                    </el-table-column>
+                    <el-table-column label="生日" prop="birthday">
+                    </el-table-column>
+                    <el-table-column label="邮件" prop="e_mail">
+                    </el-table-column>
+                    <el-table-column align="right">
+                        <template slot-scope="scope">
+                            <el-input v-model="reason" placeholder="无" :border="false"></el-input>
+                            <el-button size="mini" type="success" style="margin-top: 10px;"
+                                @click="AddFriend(scope.$index, scope.row)">加好友</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-dialog>
+
+
+            <div v-if="Isclick4">
+                <div class="ApplicationStatus">
+                    <el-table :data="tableData4" style="width: 100%">
+                        <el-table-column label="邀请人" prop="invited_id">
+                        </el-table-column>
+                        <el-table-column label="账号" prop="target_id">
+                        </el-table-column>
+                        <el-table-column label="描述" prop="reason">
+                        </el-table-column>
+                        <el-table-column align="right">
+                            <template slot="header" slot-scope="scope">
+                                <div style="display: flex; align-items: center">
+                                    <el-input v-model="AddsearchF" size="mini" style="margin-right: 5px;"
+                                        placeholder="请输入群号" ref="searchInput" @keyup.native.enter="applyFSearch()" />
+                                    <i class="el-icon-search" style="margin-right: 20px;" @click="applyFSearch()"></i>
+                                    <el-button size="mini" style="margin-right: 10px;" @click="newG()">新建群聊</el-button>
+                                </div>
+                            </template>
+                            <template slot-scope="scope">
+                                <el-button size="mini" type="primary"
+                                    @click="AgreeG(scope.$index, scope.row)">同意</el-button>
+                                <el-button size="mini" type="danger"
+                                    @click="NegateG(scope.$index, scope.row)">拒绝</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </div>
+
+            <!-- 搜索的群聊详细信息 -->
+            <el-dialog :visible.sync="dialogVisibleGInfo" v-if="SearchResultsInfo" width="45%">
+                <el-table :data="Object.values(SearchResultsInfo)" style="width: 100%">
+                    <el-table-column label="群名" prop="group_name">
+                    </el-table-column>
+                    <el-table-column label="群号" prop="group_id">
+                    </el-table-column>
+                    <el-table-column label="描述" prop="description">
+                    </el-table-column>
+                    <el-table-column label="创建时间" prop="create_time">
+                    </el-table-column>
+                    <el-table-column label="群主" prop="owner_id">
+                    </el-table-column>
+                    <el-table-column align="right">
+                        <template slot-scope="scope">
+                            <el-input v-model="reason" placeholder="无" :border="false"></el-input>
+                            <el-button size="mini" type="success" style="margin-top: 10px;"
+                                @click="ApplyJoinGroup(scope.$index, scope.row)">加群</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-dialog>
+
+
+            <el-dialog :visible.sync="NewG" width="25%" title="发起群聊" class="dia1">
+                <el-checkbox-group v-model="selectedList">
+                    <el-checkbox v-for="option in List" :key="option.friend_id" :label="option.name">{{
+                        option.name }}</el-checkbox>
+                </el-checkbox-group>
+                <el-input v-model="CreateGname" size="mini" style="margin-top: 8px;" placeholder="请输入群名" />
+                <el-input v-model="CreateGdesc" size="mini" style="margin-top: 8px;margin-bottom: 8px;"
+                    placeholder="请输入群描述" />
+                <div style="text-align: right;">
+                    <el-button size="mini" type="success" style="margin-right: 10px;" @click="CreateG()">创建</el-button>
+                </div>
+            </el-dialog>
 
 
             <div v-if="Isclick5">
@@ -343,20 +438,28 @@
 export default {
     data() {
         return {
-            searchFmsg:'',
-            AddsearchF: '',
+            CreateGname: '',
+            CreateGdesc: '',
+            selectedList: [],
+            NewG: false,
+            dialogVisibleGInfo: false,//群聊详细信息展示
+            reason: '无',//添加好友的原因
+            dialogVisibleFInfo: false,//好友详细信息展示
+            SearchResultsInfo: [],//存放搜索的好友详细信息
+            dialogVisibleF: false,//添加朋友或群聊界面，搜索结果展示dialog
+            SearchResults: '',//添加朋友界面搜索框，结果存储
+            AddsearchF: '',//添加朋友界面搜索框双向绑定数据
+            AddsearchG: '',//添加群聊界面搜索框双向绑定数据
             IsGO: false,
             newTag: '',//新建标签
             isTagHovered: null,//标签鼠标悬停
-            status1: false,
-            status2: false,
             group_identify: 2,
             tableData: [{
                 date: '2016-05-02',
                 identity: 2,
                 name: '王小虎',
                 status: true,
-                online:0
+                online: 0
             }, {
                 date: '2016-05-02',
                 identity: 1,
@@ -393,8 +496,9 @@ export default {
                 name: '王小虎',
                 status: true,
                 online: 0
-            },],
-            tableData3: [],
+            },],//5
+            tableData3: [],//好友申请
+            tableData4: [],//群申请
             status1: false,
             status2: false,
             select_value: '',
@@ -434,7 +538,8 @@ export default {
             avator: 'https://img1.baidu.com/it/u=1582149699,3121859091&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=501',
             Isclick: false,
             Isclick2: false,
-            Isclick3: true,
+            Isclick3: false,
+            Isclick4: false,
             Isclick5: false,
             info: {},//存放点击好友获得的信息
             formcon: {
@@ -454,16 +559,134 @@ export default {
         }
     },
     methods: {
-        applyF() {
-            if (this.AddsearchF != '') {
-                this.$http.post('http://192.168.2.172:8070/searchFriendOrGroup',
-                    { context: this.AddsearchF }).then(response => {
-                        console.log(response.data.data)
+        CreateG() {//创建群聊
+            this.$http.post('http://192.168.2.220:8070/CreateGroupInfo',
+                { owner_id: window.sessionStorage.getItem("userid"), group_name: this.CreateGname, description: this.CreateGdesc, user_ids: this.selectedList }).then(response => {
+                    console.log(response.data)
+                    this.CreateGname = ''
+                    this.CreateGdesc = ''
+                    this.NewG = false
+                    return this.$message.success('创建成功');
+                }).catch(error => {
+                    console.log(error)
+                    return this.$message.error('系统内部内部错误');
+                })
+        },
+        newG() {//新建群聊按钮
+            this.selectedList = []
+            this.NewG = true,
+                console.log(this.List)
+        },
+        ApplyJoinGroup(idx, d) {//申请加群
+            this.$http.post('http://192.168.2.220:8070/ApplyJoinGroup',
+                { user_id: window.sessionStorage.getItem("userid"), group_id: d.group_id, reason: this.reason }).then(response => {
+                    console.log(response.data)
+                    this.AddsearchF = ''
+                    this.dialogVisibleGInfo = false
+
+                    return this.$message.success('申请信息发送成功');
+                }).catch(error => {
+                    console.log(error)
+                    return this.$message.error('系统内部内部错误');
+                })
+        },
+        async AgreeG(idx, d) {//同意群邀请
+            await this.$http.post('http://192.168.2.220:8070/AgreeInviteGroup',
+                { apply_id: d.apply_id, user_id: d.applicant, group_id: d.target_id, applicant: d.applicant }).then(response => {
+                    console.log(response.data.data);
+                    return
+                }).catch(error => {
+                    console.log(error)
+                    return this.$message.error('系统内部内部错误');
+                })
+        },
+        async NegateG(idx, d) {//拒绝群邀请
+            await this.$http.post('http://192.168.2.220:8070/DisAgreeInviteGroup',
+                { apply_id: d.apply_id, user_id: d.applicant, group_id: d.target_id }).then(response => {
+                    console.log(response.data.data);
+                    return
+                }).catch(error => {
+                    console.log(error)
+                    return this.$message.error('系统内部内部错误');
+                })
+        },
+        async applyG() {//打开加群聊界面
+            await this.$http.post('http://192.168.2.220:8070/QueryInviteGroup',
+                { user_id: window.sessionStorage.getItem("userid") }).then(response => {
+                    this.tableData4 = response.data.data
+                    console.log(response.data.data);
+                    this.Isclick = false
+                    this.Isclick2 = false
+                    this.Isclick3 = false
+                    this.Isclick4 = true
+                    this.Isclick5 = false
+                    return
+                }).catch(error => {
+                    console.log(error)
+                    return this.$message.error('系统内部内部错误');
+                })
+
+        },
+
+        AddFriend(idx, d) {//发送申请加好友
+            this.$http.post('http://192.168.2.220:8070/addFriend',
+                { user_id: window.sessionStorage.getItem("userid"), friend_id: d.user_id, reason: this.reason }).then(response => {
+                    console.log(response.data)
+                    this.AddsearchF = ''
+                    this.dialogVisibleFInfo = false
+
+                    return this.$message.success('申请信息发送成功');
+                }).catch(error => {
+                    console.log(error)
+                    return this.$message.error('系统内部内部错误');
+                })
+        },
+
+        ApplyAddF(idx, d) {//详情接口,用于显示该用户详细信息
+            this.SearchResultsInfo = []
+            console.log(idx, d)
+            if (d.type == 0) {
+                this.$http.post('http://192.168.2.220:8070/queryUserInfo',
+                    { user_id: d.id, }).then(response => {
+                        this.SearchResultsInfo.push(response.data.data.user_info)
+                        console.log(this.SearchResultsInfo)
+                        this.dialogVisibleF = false
+                        this.dialogVisibleFInfo = true
                         return this.$message.success('操作成功');
                     }).catch(error => {
                         console.log(error)
                         return this.$message.error('系统内部内部错误');
                     })
+            } else {
+                this.$http.post('http://192.168.2.220:8070/QueryGroupInfo',
+                    { group_id: d.id, user_id: window.sessionStorage.getItem("userid") }).then(response => {
+                        this.SearchResultsInfo.push(response.data.data)
+                        console.log(this.SearchResultsInfo)
+                        this.dialogVisibleF = false
+                        this.dialogVisibleGInfo = true
+                        return this.$message.success('操作成功');
+                    }).catch(error => {
+                        console.log(error)
+                        return this.$message.error('系统内部内部错误');
+                    })
+            }
+
+        },
+
+        applyFSearch() {//添加好友搜索触发事件
+            if (this.AddsearchF != '') {
+                this.$http.post('http://192.168.2.220:8070/searchFriendOrGroup',
+                    { context: this.AddsearchF }).then(response => {
+                        this.SearchResults = response.data.data.context.result
+                        console.log(this.SearchResults)
+                        this.dialogVisibleF = true
+                        return this.$message.success('操作成功');
+                    }).catch(error => {
+                        console.log(error)
+                        return this.$message.error('系统内部内部错误');
+                    })
+            } else {
+                return this.$message.error('无搜索结果');
             }
         },
         async AgreeApply(idx, d) {//同意申请
@@ -500,6 +723,7 @@ export default {
             this.Isclick = false
             this.Isclick2 = false
             this.Isclick3 = true
+            this.Isclick4 = false
             this.Isclick5 = false
         },
         GmemberManage() {//群成员管理
@@ -727,7 +951,8 @@ export default {
                 }).catch(error => {
                     console.log(error)
                     return this.$message.error('更新失败');
-                })},
+                })
+        },
         handleEdit(index, row) {
             console.log(index, row);
         },
@@ -767,15 +992,6 @@ export default {
             } else if (num == 1) {
                 return { name: "管理", status: "success" }
             }
-        },
-        async get_contactor_list() {
-            const id = window.sessionStorage.getItem("userid")
-            console.log(id)
-            const { data: res } = await this.$http.post("http://192.168.2.172:8070/queryFriendList", { user_id: parseInt(id, 10) });
-            setTimeout(() => {
-                console.log(res);
-            }, 200);
-            //this.$store.commit('updateContactList', res.data.friend_list.friends);
         },
         choose_msg_type(type) {//消息通知框内显示内容变化
             if (type == false || type == 6) {
@@ -863,6 +1079,19 @@ export default {
             this.Isclick = false,
                 this.$router.replace('/chat_msg' + this.index1 + '/' + window.sessionStorage.getItem("contactor_id"))
         },
+        JumpChatG() {
+            this.index1 = window.sessionStorage.getItem("msg")
+            if (this.index1 == undefined || this.index1 == '2') {
+                this.index1 = '1'
+                window.sessionStorage.setItem("msg", "1")
+            }
+            else if (this.index1 == '1') {
+                this.index1 = '2'
+                window.sessionStorage.setItem("msg", "2")
+            }
+            this.Isclick = false,
+                this.$router.replace('/chat_msg' + this.index1 + '/' + this.groupInfo.group_id)
+        },
         ClearData() {
             // this.List = [],
             // this.avator = '',
@@ -872,7 +1101,6 @@ export default {
     },
     created() {
         window.sessionStorage.setItem("contactor_id", "")
-         this.get_contactor_list()
         this.List = this.$store.state.contactor_list
         this.my_group_list = this.$store.state.my_group_list
     },

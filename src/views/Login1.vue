@@ -72,7 +72,7 @@ export default {
                 this.saveCredentials(this.form.username, this.form.password);
                 this.$message.success("登录成功")
                 this.$root.$emit('loginSuccess'); // 触发自定义事件 'loginSuccess'
-                this.$router.replace('/selector');
+                this.$router.push('/selector');
 
             });
         },
