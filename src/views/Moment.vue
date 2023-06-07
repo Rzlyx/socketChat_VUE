@@ -346,7 +346,7 @@ export default {
     methods: {
         async get_moment_list() {
             try {
-                const { data } = await this.$http.post('http://192.168.2.220:8070/queryAllFriendCircle',{
+                const { data } = await this.$http.post('http://192.168.2.172:8070/queryAllFriendCircle',{
                     user_id: this.user_id,
                     readtime: this.readtime,
                     num: this.num,

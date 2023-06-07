@@ -63,11 +63,11 @@ export default {
     },
     methods: {
         async get_users() {
-            const { data: res } = await this.$http.post('http://192.168.2.220:8070/queryContactorList', { user_id: "123456" });
+            const { data: res } = await this.$http.post('http://192.168.2.172:8070/queryContactorList', { user_id: "123456" });
             
         },
         async update_user_list() {
-            const { data: res } = await this.$http.post('http://192.168.2.220:8070/setContactorList', this.users);
+            const { data: res } = await this.$http.post('http://192.168.2.172:8070/setContactorList', this.users);
 
         },
         toggleHighlight(userId, index) {

@@ -11,7 +11,7 @@
         <div class="message-wrapper" :class="message.send_id === userId ? 'me' : 'other'">
           <div class="message" :class="message.send_id === userId ? 'me' : 'other'">
             <template v-if="message.type === 1">
-              <img :src="message.imageSrc" class="message-image" alt="Image">
+              <img :src="url_photo + message.id" class="message-image" alt="Image">
             </template>
             <template v-else>
               {{ message.context }}
@@ -26,9 +26,13 @@
 
     <div class="select2">
       <div>
-        <el-tooltip class="item" effect="dark" content="发送图片" placement="top">
-          <i class="el-icon-picture-outline"></i>
-        </el-tooltip>
+        <el-upload class="upload-demo" action="http://192.168.2.172:8070/uploadPrivateChatPhoto"
+          :before-upload="handleBeforeUpload" :data="picture_msg" :on-error="pic_err" :on-success="pic_success" name="img"
+          :show-file-list="false">
+          <el-tooltip class="item" effect="dark" content="发送图片" placement="top">
+            <i class="el-icon-picture-outline"></i>
+          </el-tooltip>
+        </el-upload>
       </div>
       &nbsp; &nbsp;
       <div>
@@ -56,14 +60,15 @@
     <el-drawer title="我是标题" :visible.sync="drawer" :with-header="false" size="40%">
       <div class="block" style="height: 100%;">
         <el-date-picker v-model="value2" type="datetimerange" :picker-options="pickerOptions" range-separator="至"
-          start-placeholder="开始日期" end-placeholder="结束日期" align="right" @change="showTime()"  value-format="yyyy-MM-dd hh:mm:ss">
+          start-placeholder="开始日期" end-placeholder="结束日期" align="right" @change="showTime()"
+          value-format="yyyy-MM-dd hh:mm:ss">
         </el-date-picker>
         <div class="history_msg">
           <div class="history_msg_item" v-for="item in history_msg_list" :key="item.id">
             <div class="history_msg_info">{{ item.name }} &nbsp; {{ item.time }}</div>
             <div class="history_msg_context">{{ item.context }}</div>
           </div>
-          
+
         </div>
       </div>
     </el-drawer>
@@ -80,118 +85,119 @@ export default {
   },
   data() {
     return {
-      history_msg_list:[
+      url_photo: "http://192.168.2.172:8070/getPhotoByID/",
+      history_msg_list: [
         {
-          id:"1",
-          msg_type:'2',
-          context:"今晚吃什么？？？？",
-          time:'2023-05-15 15:16:45',
-          send_id:"43234",
-          receive_id:'45354',
-          type:'1',
+          id: "1",
+          msg_type: '2',
+          context: "今晚吃什么？？？？",
+          time: '2023-05-15 15:16:45',
+          send_id: "43234",
+          receive_id: '45354',
+          type: '1',
         },
         {
-          id:"2",
-          msg_type:'2',
-          context:"今晚吃什么？？？？",
-          time:'2023-05-15 15:16:45',
-          send_id:"43234",
-          receive_id:'45354',
-          type:'1',
+          id: "2",
+          msg_type: '2',
+          context: "今晚吃什么？？？？",
+          time: '2023-05-15 15:16:45',
+          send_id: "43234",
+          receive_id: '45354',
+          type: '1',
         },
         {
-          id:"3",
-          msg_type:'2',
-          context:"今晚吃什么？？？？",
-          time:'2023-05-15 15:16:45',
-          send_id:"43234",
-          receive_id:'45354',
-          type:'1',
+          id: "3",
+          msg_type: '2',
+          context: "今晚吃什么？？？？",
+          time: '2023-05-15 15:16:45',
+          send_id: "43234",
+          receive_id: '45354',
+          type: '1',
         },
         {
-          id:"4",
-          msg_type:'2',
-          context:"今晚吃什么？？？？",
-          time:'2023-05-15 15:16:45',
-          send_id:"43234",
-          receive_id:'45354',
-          type:'1',
+          id: "4",
+          msg_type: '2',
+          context: "今晚吃什么？？？？",
+          time: '2023-05-15 15:16:45',
+          send_id: "43234",
+          receive_id: '45354',
+          type: '1',
         },
         {
-          id:"5",
-          msg_type:'2',
-          context:"今晚吃什么？？？？",
-          time:'2023-05-15 15:16:45',
-          send_id:"43234",
-          receive_id:'45354',
-          type:'1',
+          id: "5",
+          msg_type: '2',
+          context: "今晚吃什么？？？？",
+          time: '2023-05-15 15:16:45',
+          send_id: "43234",
+          receive_id: '45354',
+          type: '1',
         },
         {
-          id:"6",
-          msg_type:'2',
-          context:"今晚吃什么？？？？",
-          time:'2023-05-15 15:16:45',
-          send_id:"43234",
-          receive_id:'45354',
-          type:'1',
+          id: "6",
+          msg_type: '2',
+          context: "今晚吃什么？？？？",
+          time: '2023-05-15 15:16:45',
+          send_id: "43234",
+          receive_id: '45354',
+          type: '1',
         },
         {
-          id:"7",
-          msg_type:'2',
-          context:"今晚吃什么？？？？",
-          time:'2023-05-15 15:16:45',
-          send_id:"43234",
-          receive_id:'45354',
-          type:'1',
+          id: "7",
+          msg_type: '2',
+          context: "今晚吃什么？？？？",
+          time: '2023-05-15 15:16:45',
+          send_id: "43234",
+          receive_id: '45354',
+          type: '1',
         },
         {
-          id:"8",
-          msg_type:'2',
-          context:"今晚吃什么？？？？",
-          time:'2023-05-15 15:16:45',
-          send_id:"43234",
-          receive_id:'45354',
-          type:'1',
+          id: "8",
+          msg_type: '2',
+          context: "今晚吃什么？？？？",
+          time: '2023-05-15 15:16:45',
+          send_id: "43234",
+          receive_id: '45354',
+          type: '1',
         },
         {
-          id:"9",
-          msg_type:'2',
-          context:"今晚吃什么？？？？",
-          time:'2023-05-15 15:16:45',
-          send_id:"43234",
-          receive_id:'45354',
-          type:'1',
+          id: "9",
+          msg_type: '2',
+          context: "今晚吃什么？？？？",
+          time: '2023-05-15 15:16:45',
+          send_id: "43234",
+          receive_id: '45354',
+          type: '1',
         },
       ],
       pickerOptions: {
-          shortcuts: [{
-            text: '最近一周',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '最近三个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit('pick', [start, end]);
-            }
-          }]
-        },
-        value2: '',
-      
+        shortcuts: [{
+          text: '最近一周',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+            picker.$emit('pick', [start, end]);
+          }
+        }]
+      },
+      value2: '',
+
       drawer: false,
       user: {
         id: '',
@@ -208,11 +214,47 @@ export default {
       otheravatar: '',
       userId: '',
       contactorId: '',
+      picture_msg: {
+        id: "",
+        context: "",
+        time: "",
+        send_id: "",
+        receive_id: "",
+        type: 1,
+        msg_type: 0
+      }
     };
   },
   methods: {
-    showTime(){
+    pic_success() {
+      this.messages.push({
+        id:this.picture_msg.id,
+        context:this.picture_msg.context,
+        time:this.picture_msg.time,
+        send_id:this.picture_msg.send_id,
+        receive_id:this.picture_msg.receive_id,
+        type:this.picture_msg.type,
+        msg_type:this.picture_msg.msg_type
+      });
+      this.$store.commit('addMessageLocal', this.messages);
+      this.$getWebSocket().send(JSON.stringify(this.messages[this.messages.length - 1]));
+    },
+    pic_err(error, file) {
+      console.error('文件上传失败', error, file);
+    },
+    handleBeforeUpload() {
+      var id = this.generateID()
+      this.picture_msg.id = id
+      this.picture_msg.context = "[图片]"
+      this.picture_msg.time = this.getCurrentTime()
+      this.picture_msg.send_id = this.userId
+      this.picture_msg.receive_id = this.contactorId
+      console.log(this.messages)
+    },
 
+
+    showTime() {
+      console.log(this.value2)
     },
     get_remark() {
       const targetObj2 = this.$store.state.contactor_list.find(obj => obj.friend_id === this.contactorId)
@@ -285,7 +327,7 @@ export default {
   mounted() {
   },
   created() {
-    
+
     //获取数据
     this.userId = window.sessionStorage.getItem("userid"),
       this.contactorId = this.$route.params.userId
@@ -302,21 +344,29 @@ export default {
 </script>
     
 <style scoped>
-.history_msg_info{
+.message-image {
+  height: 100px;
+  width: 60px;
+}
+
+.history_msg_info {
   font-size: 10px;
   color: #64b5f6;
 }
-.history_msg_item{
+
+.history_msg_item {
   width: 100%;
   margin-top: 5px;
 }
-.history_msg{
+
+.history_msg {
   width: 88%;
   height: 85%;
   background-color: #ccc;
   margin-left: 6%;
   margin-top: 8px;
 }
+
 .el-icon-picture-outline:hover {
   cursor: pointer;
   color: blue;

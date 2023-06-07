@@ -108,7 +108,7 @@ export default {
       try {
         console.log(userid)
         if (type == 1) {
-          const { data } = await this.$http.post('http://192.168.2.220:8070/SendCircle', {
+          const { data } = await this.$http.post('http://192.168.2.172:8070/SendCircle', {
             sender: userid,
             news: this.content,
             type: type,
@@ -117,12 +117,12 @@ export default {
           })
         }
         // else if (type == 2){
-        //   const { data } = await this.$http.post('http://192.168.2.220:8070/UploadCirclePhoto', {
+        //   const { data } = await this.$http.post('http://192.168.2.172:8070/UploadCirclePhoto', {
         //     news_id: this.news_id,
         //   })
         // }
         else if (type == 4) {
-          const { data: momentData } = await this.$http.post('http://192.168.2.220:8070/SendCircle', {
+          const { data: momentData } = await this.$http.post('http://192.168.2.172:8070/SendCircle', {
             sender: userid,
             news: this.content,
             type: type,
@@ -133,7 +133,7 @@ export default {
           var image_id = momentData.data.news_id
 
           // if (this.images.length != 0) {
-          const { data: imageData } = await this.$http.post('http://192.168.2.220:8070/UploadCirclePhoto', {
+          const { data: imageData } = await this.$http.post('http://192.168.2.172:8070/UploadCirclePhoto', {
             news_id: image_id,
             photo: this.images,
           })
