@@ -44,6 +44,11 @@
                 <span slot="title">收藏</span>
               </el-menu-item>
 
+
+              <el-menu-item :index=url4 @click="login_out">
+                <i class="el-icon-circle-close"></i>
+                <span slot="title">退出</span>
+              </el-menu-item>
             </el-menu>
           </div>
         </div>
@@ -153,7 +158,7 @@
 export default {
   data() {
     return {
-      isCollapse:true,
+      isCollapse: true,
       url1: "msg_user",
       url2: "userlist",
       url3: "momentlist",
@@ -186,6 +191,21 @@ export default {
     };
   },
   methods: {
+    login_out() {
+      var id = window.sessionStorage.getItem("userid")
+      this.$getWebSocket().send(JSON.stringify({
+        id: "",
+        context: "",
+        time: "",
+        send_id: id,
+        receive_id: "",
+        type: 0,
+        msg_type: 998
+      }))
+      window.sessionStorage.setItem("userid", "")
+      window.localStorage.removeItem("credentials")
+      this.$router.replace("/login1")
+    },
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
