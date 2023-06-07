@@ -26,7 +26,7 @@
 
     <div class="select2">
       <div>
-        <el-upload class="upload-demo" action="http://192.168.2.172:8070/uploadPrivateChatPhoto"
+        <el-upload class="upload-demo" action="http://192.168.2.220:8070/uploadPrivateChatPhoto"
           :before-upload="handleBeforeUpload" :data="picture_msg" :on-error="pic_err" :on-success="pic_success" name="img"
           :show-file-list="false">
           <el-tooltip class="item" effect="dark" content="发送图片" placement="top">
@@ -60,8 +60,7 @@
     <el-drawer title="我是标题" :visible.sync="drawer" :with-header="false" size="40%">
       <div class="block" style="height: 100%;">
         <el-date-picker v-model="value2" type="datetimerange" :picker-options="pickerOptions" range-separator="至"
-          start-placeholder="开始日期" end-placeholder="结束日期" align="right" 
-          value-format="yyyy-MM-dd hh:mm:ss">
+          start-placeholder="开始日期" end-placeholder="结束日期" align="right" value-format="yyyy-MM-dd hh:mm:ss">
         </el-date-picker>
         <el-button type="primary" @click="get_history_msg">查询</el-button>
         <div class="history_msg">
@@ -86,7 +85,9 @@ export default {
   },
   data() {
     return {
-      url_photo: "http://192.168.2.172:8070/getPhotoByID/",
+      my_gorup_info:{},
+      IsGroup: false,
+      url_photo: "http://192.168.2.220:8070/getPhotoByID/",
       history_msg_list: [
         {
           id: "1",
@@ -207,6 +208,11 @@ export default {
         identif: 1,
         picture: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
       },
+      group: {
+        group_id: '',
+        remark: '',
+        picture: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
+      },
       messages: [
 
       ],
@@ -227,16 +233,42 @@ export default {
     };
   },
   methods: {
+    async get_group_info(){
+      const {data:res} =await this.$http.post("http://192.168.2.220:8070/QueryGroupInfo",{
+        user_id:this.userId,
+        group_id:this.contactorId
+      })
+      if(res.code===1000){
+        this.my_gorup_info=res.data
+      }else{
+        console.log
+      }
+    },
     pic_success() {
-      this.messages.push({
-        id:this.picture_msg.id,
-        context:this.picture_msg.context,
-        time:this.picture_msg.time,
-        send_id:this.picture_msg.send_id,
-        receive_id:this.picture_msg.receive_id,
-        type:this.picture_msg.type,
-        msg_type:this.picture_msg.msg_type
+      if(this.IsGroup){
+        console.log(this.contactorId)
+        this.messages.push({
+        id: this.picture_msg.id,
+        context: this.picture_msg.context,
+        time: this.picture_msg.time,
+        send_id: this.picture_msg.send_id,
+        receive_id: this.picture_msg.receive_id,
+        type: this.picture_msg.type,
+        msg_type: 6,
+        send_name:this.my_gorup_info.my_name
       });
+      }else{
+        this.messages.push({
+        id: this.picture_msg.id,
+        context: this.picture_msg.context,
+        time: this.picture_msg.time,
+        send_id: this.picture_msg.send_id,
+        receive_id: this.picture_msg.receive_id,
+        type: this.picture_msg.type,
+        msg_type: this.picture_msg.msg_type
+      });
+      }
+      
       this.$store.commit('addMessageLocal', this.messages);
       this.$getWebSocket().send(JSON.stringify(this.messages[this.messages.length - 1]));
     },
@@ -256,23 +288,31 @@ export default {
 
 
     get_remark() {
-      const targetObj2 = this.$store.state.contactor_list.find(obj => obj.friend_id === this.contactorId)
-      this.user.remark = targetObj2.name
+      if (this.IsGroup == false) {
+        const targetObj2 = this.$store.state.contactor_list.find(obj => obj.friend_id === this.contactorId)
+        this.user.remark = targetObj2.name
+      } else {
+        const targetG = this.$store.state.my_group_list.find(obj => obj.group_id === this.contactorId)
+        console.log(targetG)
+        this.user.remark = targetG.group_name
+      }
+
+
     },
     async get_history_msg() {
       console.log("123615")
-      const {data:res} =await this.$http.post("http://192.168.2.172:8070/queryPrivateChatMsgByDate",{
-        start_time:this.value2[0],
-        end_time:this.value2[1],
-        user_id:this.userId,
-        friend_id:this.contactorId
+      const { data: res } = await this.$http.post("http://192.168.2.220:8070/queryPrivateChatMsgByDate", {
+        start_time: this.value2[0],
+        end_time: this.value2[1],
+        user_id: this.userId,
+        friend_id: this.contactorId
       })
-      if(res.code===1000){
-        this.history_msg_list=res.message_list.messages
-      }else{
+      if (res.code === 1000) {
+        this.history_msg_list = res.message_list.messages
+      } else {
 
       }
-      
+
     },
     video_chat() {
       this.$router.push('/video_chat')
@@ -314,15 +354,30 @@ export default {
     sendMessage() {
 
       if (this.newMessage === "") return;
-      this.messages.push({
-        id: this.generateID(),
-        context: this.newMessage,
-        time: this.getCurrentTime(),
-        send_id: this.userId,
-        receive_id: this.contactorId,
-        type: 0,
-        msg_type: 0
-      });
+      if (this.IsGroup) {
+        
+        this.messages.push({
+          id: this.generateID(),
+          context: this.newMessage,
+          time: this.getCurrentTime(),
+          send_id: this.userId,
+          receive_id: this.contactorId,
+          type: 0,
+          msg_type: 6,
+          send_name:this.my_gorup_info.my_name
+        });
+      } else {
+        this.messages.push({
+          id: this.generateID(),
+          context: this.newMessage,
+          time: this.getCurrentTime(),
+          send_id: this.userId,
+          receive_id: this.contactorId,
+          type: 0,
+          msg_type: 0
+        });
+      }
+
       this.$store.commit('addMessageLocal', this.messages);
       this.$getWebSocket().send(JSON.stringify(this.messages[this.messages.length - 1]))
 
@@ -346,9 +401,11 @@ export default {
     if (this.messages == undefined) {
       this.messages = []
     }
+    this.IsGroup = this.contactorId.length > 15;
 
     this.$store.commit('inspectMsg', this.contactorId);
     this.get_remark()
+    this.get_group_info()
   },
 
 };
