@@ -11,7 +11,10 @@
         <div class="message-wrapper" :class="message.send_id === userId ? 'me' : 'other'">
           <div class="message" :class="message.send_id === userId ? 'me' : 'other'">
             <template v-if="message.type === 1">
-              <img :src="url_photo + message.id" class="message-image" alt="Image">
+              <!-- <img :src="url_photo + message.id" class="message-image" alt="Image"> -->
+              <el-image style="width: 110px; height: 150px" :src="url_photo + message.id"
+                :preview-src-list="big_img(url_photo + message.id)">
+              </el-image>
             </template>
             <template v-else>
               {{ message.context }}
@@ -60,13 +63,23 @@
     <el-drawer title="我是标题" :visible.sync="drawer" :with-header="false" size="40%">
       <div class="block" style="height: 100%;">
         <el-date-picker v-model="value2" type="datetimerange" :picker-options="pickerOptions" range-separator="至"
-          start-placeholder="开始日期" end-placeholder="结束日期" align="right" @change="showTime()"
-          value-format="yyyy-MM-dd hh:mm:ss">
+          start-placeholder="开始日期" end-placeholder="结束日期" align="right" value-format="yyyy-MM-dd HH:mm:ss">
         </el-date-picker>
+        <el-button type="primary" @click="get_history_msg">查询</el-button>
         <div class="history_msg">
           <div class="history_msg_item" v-for="item in history_msg_list" :key="item.id">
-            <div class="history_msg_info">{{ item.name }} &nbsp; {{ item.time }}</div>
-            <div class="history_msg_context">{{ item.context }}</div>
+            <div class="history_msg_info">{{ item.send_id == userId ? "我" : user.remark }} &nbsp; {{ item.time }}</div>
+            <div class="message">
+              <template v-if="item.type === 1">
+                <el-image style="width: 110px; height: 150px" :src="url_photo + item.id"
+                  :preview-src-list="big_img(url_photo + item.id)">
+                </el-image>
+              </template>
+              <template v-else>
+                {{ item.context }}
+              </template>
+              <!-- <span class="message-time">{{ message.time }}</span> -->
+            </div>
           </div>
 
         </div>
@@ -87,87 +100,7 @@ export default {
     return {
       url_photo: "http://192.168.2.172:8070/getPhotoByID/",
       history_msg_list: [
-        {
-          id: "1",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
-        {
-          id: "2",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
-        {
-          id: "3",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
-        {
-          id: "4",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
-        {
-          id: "5",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
-        {
-          id: "6",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
-        {
-          id: "7",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
-        {
-          id: "8",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
-        {
-          id: "9",
-          msg_type: '2',
-          context: "今晚吃什么？？？？",
-          time: '2023-05-15 15:16:45',
-          send_id: "43234",
-          receive_id: '45354',
-          type: '1',
-        },
+
       ],
       pickerOptions: {
         shortcuts: [{
@@ -222,19 +155,25 @@ export default {
         receive_id: "",
         type: 1,
         msg_type: 0
-      }
+      },
+      contactor_name: '',
     };
   },
   methods: {
+    big_img(url) {
+      var list = []
+      list.push(url)
+      return list
+    },
     pic_success() {
       this.messages.push({
-        id:this.picture_msg.id,
-        context:this.picture_msg.context,
-        time:this.picture_msg.time,
-        send_id:this.picture_msg.send_id,
-        receive_id:this.picture_msg.receive_id,
-        type:this.picture_msg.type,
-        msg_type:this.picture_msg.msg_type
+        id: this.picture_msg.id,
+        context: this.picture_msg.context,
+        time: this.picture_msg.time,
+        send_id: this.picture_msg.send_id,
+        receive_id: this.picture_msg.receive_id,
+        type: this.picture_msg.type,
+        msg_type: this.picture_msg.msg_type
       });
       this.$store.commit('addMessageLocal', this.messages);
       this.$getWebSocket().send(JSON.stringify(this.messages[this.messages.length - 1]));
@@ -253,14 +192,27 @@ export default {
     },
 
 
-    showTime() {
-      console.log(this.value2)
-    },
+
     get_remark() {
       const targetObj2 = this.$store.state.contactor_list.find(obj => obj.friend_id === this.contactorId)
-      this.user.remark = targetObj2.name
+      if (targetObj2)
+        this.user.remark = targetObj2.name
+      else this.user.remark = "对方不是你的好友"
     },
-    get_history_msg() {
+    async get_history_msg() {
+      console.log(this.value2)
+      const { data: res } = await this.$http.post("http://192.168.2.172:8070/queryPrivateChatMsgByDate", {
+        start_time: this.value2[0],
+        end_time: this.value2[1],
+        user_id: this.userId,
+        friend_id: this.contactorId
+      })
+      if (res.code === 1000) {
+        this.history_msg_list = res.data.message_list.messages
+        console.log(res.data.message_list.messages)
+      } else {
+
+      }
 
     },
     video_chat() {
@@ -344,10 +296,10 @@ export default {
 </script>
     
 <style scoped>
-.message-image {
+/* .message-image {
   height: 100px;
   width: 60px;
-}
+} */
 
 .history_msg_info {
   font-size: 10px;
@@ -362,7 +314,6 @@ export default {
 .history_msg {
   width: 88%;
   height: 85%;
-  background-color: #ccc;
   margin-left: 6%;
   margin-top: 8px;
 }
