@@ -15,7 +15,7 @@ let socket = null; // 全局 WebSocket 连接
 
 function createWebSocket(token2) {
 
-  socket = new WebSocket('ws://192.168.2.220:8070/ws/' + token2);
+  socket = new WebSocket('ws://192.168.2.172:8070/ws/' + token2);
 
   socket.onopen = function () {
     console.log("连接成功")
@@ -63,17 +63,17 @@ new Vue({
     this.$root.$on('loginSuccess', async () => {
       tryReconnectWebSocket();
       const id = window.sessionStorage.getItem("userid");
-      const { data: res } = await this.$http.post("http://192.168.2.220:8070/queryFriendList", { user_id: id });
+      const { data: res } = await this.$http.post("http://192.168.2.172:8070/queryFriendList", { user_id: id });
       this.$store.commit('updateContactList', res.data.friend_list.friends);
 
-      const { data: res2 } = await this.$http.post('http://192.168.2.220:8070/queryContactorList', {user_id:id});
+      const { data: res2 } = await this.$http.post('http://192.168.2.172:8070/queryContactorList', {user_id:id});
       
       this.$store.commit('get_msg_user',res2.data.contactor_list.contactor_list)
       
-      const { data: resG } = await this.$http.post("http://192.168.2.220:8070/QueryGroupList", { user_id: id });
+      const { data: resG } = await this.$http.post("http://192.168.2.172:8070/QueryGroupList", { user_id: id });
       this.$store.commit('updateGList', resG.data)
       
-      const {data:res3} =await this.$http.post("http://192.168.2.220:8070/StartSendWebSocket",{user_id:id})
+      const {data:res3} =await this.$http.post("http://192.168.2.172:8070/StartSendWebSocket",{user_id:id})
       if (res3.code===1000){
         this.$message.success("开始拉取信息")
       }else{
