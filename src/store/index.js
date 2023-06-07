@@ -1,10 +1,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios';
+import { Message } from 'element-ui';
 
 Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
+    temp_contactor_info:{},
     tem_name: "",
     MsgSum: 0,
     Contactor: 0,
@@ -169,15 +171,25 @@ const store = new Vuex.Store({
 
   },
   mutations: {
-    get_msg_user(state, msg_user) {
+    get_msg_user(context, msg_user) {
       var highlighted = false;
       var num = 0;
-      if (msg_user && Array.isArray(msg_user)) {
-        state.user_list = msg_user.map(function (user) {
-          if(user.status==0){
-            var status="danger"
-          }else{
-            var status="info"
+      if(msg_user==null){
+        context.user_list = [];
+        return
+      }
+      var filteredMsgUser = msg_user.filter(function (user) {
+        var temp_id = user.id;
+        const targetObj = context.contactor_list.find(contact => contact.id == temp_id);
+        return targetObj; // 只保留存在于 contactor_list 中的元素
+      });
+
+      if (filteredMsgUser && Array.isArray(filteredMsgUser)) {
+        context.user_list = filteredMsgUser.map(function (user) {
+          if (user.status == 0) {
+            var status = "danger";
+          } else {
+            var status = "info";
           }
           return {
             id: user.id,
@@ -187,16 +199,34 @@ const store = new Vuex.Store({
             picture: "http://192.168.2.172:8070/getPhotoByID/" + user.id,
             highlighted: highlighted,
             num: num,
-            status:status
+            status: status
           };
         });
+        this.dispatch('update_msg_user')
       } else {
-        return
+        context.user_list = []; // 如果 filteredMsgUser 为空数组或不是数组，将 user_list 重置为空数组
       }
-
     },
-
-
+    get_moment_list(state, momentList) {
+      if (Array.isArray(momentList) && momentList.length > 0) {
+        // 循环处理每个朋友圈数据
+        state.momentList = momentList.map(moment => {
+          return {
+            id: moment.id, // 朋友圈ID
+            avatar: moment.user.avatar, // 用户头像
+            username: moment.user.username, // 用户名字
+            content: moment.content, // 朋友圈内容
+            pictures: moment.pictures, // 图片列表
+            time: moment.time, // 发布时间
+            comments: moment.comments, // 评论列表
+            likes: moment.likes, // 点赞列表
+            isLiked: false // 是否已经点赞
+          }
+        })
+      } else {
+        state.momentList = []
+      }
+    },
     momentLikes(state, like_info) {
       const target_moment = state.moment_list[like_info.index]// 第一步：根据传入的 index 取出目标动态对象
       const existing_like = target_moment.likes.find(like => like.id === like_info.id)// 第二步：判断用户是否重复点赞了该动态
@@ -224,15 +254,18 @@ const store = new Vuex.Store({
       state.my_group_list = listG
     },
     inspectMsg(context, userId) {
-      var id =window.sessionStorage.getItem("userid")
+      var id = window.sessionStorage.getItem("userid")
       const targetObj = context.user_list.find(obj => obj.id === userId)
+      if(targetObj==null){
+        return
+      }
       var t = targetObj.num
       var contact_id = targetObj.id
       var info = {
         user_id: id,
         friend_id: contact_id
       }
-      
+
       this.dispatch('update_msg_readtime', info)
       targetObj.num = 0;
       context.MsgSum -= t
@@ -243,9 +276,33 @@ const store = new Vuex.Store({
       context.message[receive_id] = messages
       var temp_message = messages[last]
       const targetObj = context.user_list.find(obj => obj.id === receive_id)
-      targetObj.new_msg = temp_message.context
-      targetObj.time = temp_message.time
+      const target_contact= context.contactor_list.find(obj=>obj.friend_id==receive_id)
+      if (target_contact==null){
+        Message.error("他不是你的联系人")
+        return
+      }
+      if(targetObj==null){
+        var info={user_id:temp_message.send_id,friend_id:receive_id}
+        this.dispatch('get_contactor_info',info)
+        if(context.temp_contactor_info.is_private_chat_gray==false)  var status="error"
+        else  var status="info"
+        var user={
+          id: target_contact.friend_id,
+          name: target_contact.name,
+          new_msg: temp_message.context,
+          time: temp_message.time,
+          picture: "http://192.168.2.220:8070/getPhotoByID/" + target_contact.friend_id,
+          highlighted: true,
+          num: 0,
+          status: status
+        }
+        context.user_list.push(user)
+      }else{
+        targetObj.new_msg = temp_message.context
+        targetObj.time = temp_message.time
+      }
       
+
       this.dispatch('update_msg_user');
     },
 
@@ -261,12 +318,10 @@ const store = new Vuex.Store({
       }
 
       const contactor_id = window.sessionStorage.getItem('contactor_id')
-      //在mgs_user里找到对应的联系人
       const targetObj = context.user_list.find(obj => obj.id === send_id)
       //如果找到了
 
       if (targetObj) {
-        //如果我当前的页面就是这个联系人，只将最新消息赋给
         if (contactor_id == message.send_id) {
           targetObj.new_msg = message.context
           targetObj.time = message.time
@@ -282,12 +337,12 @@ const store = new Vuex.Store({
         }
       } else {//如果没找到，构建一个新的对象塞进去
         const targetObj2 = context.contactor_list.find(obj => obj.friend_id === send_id)
-        if (message.msg_type==0||message.msg_type==6){
+        if (message.msg_type == 0 || message.msg_type == 6) {
           //如果这个是通知消息，整个未读消息加1
           context.MsgSum++
-          var status=""
-        }else{
-          var status="warning"
+          var status = ""
+        } else {
+          var status = "warning"
         }
         context.user_list.push({
           "id": send_id,
@@ -297,10 +352,9 @@ const store = new Vuex.Store({
           "picture": 'http://192.168.2.172:8070/getPhotoByID/' + send_id,
           "highlighted": false,
           "num": 1,  //将这个用户的未读消息设为1
-          "status":status
+          "status": status
         })
-        
-        
+
       }
 
       this.dispatch('update_msg_user');
@@ -309,10 +363,10 @@ const store = new Vuex.Store({
   },
   actions: {
     async update_msg_user(context) {
-      var id =window.sessionStorage.getItem("userid")
+      var id = window.sessionStorage.getItem("userid")
       const newContactorList = context.state.user_list.map(user => {
-        if(user.status=="") var new_status=0
-        else                var  new_status=1
+        if (user.status == "") var new_status = 0
+        else var new_status = 1
         return {
           id: user.id,
           new_msg: user.new_msg,
@@ -325,8 +379,8 @@ const store = new Vuex.Store({
         const { data: res } = await axios.post('http://192.168.2.172:8070/setContactorList', {user_id:id,contactor_list:newContactorList});
         // 处理响应数据或其他操作
         if (res.code === 1000) {
-        }else{
-          console.log("更新信息失败",res)
+        } else {
+          console.log("更新信息失败", res)
         }
       } catch (error) {
         // 处理错误情况
@@ -349,6 +403,19 @@ const store = new Vuex.Store({
         const { data: res } = await axios.post('http://192.168.2.172:8070/setReadTime', info);
         // 处理响应数据或其他操作
         if (res.code === 1000) {
+        }
+      } catch (error) {
+        // 处理错误情况
+      }
+    },
+    async get_contactor_info(context, info) {
+      try {
+        const { data: res } = await axios.post('http://192.168.2.220:8070/queryFriendInfo', info);
+        // 处理响应数据或其他操作
+        if (res.code === 1000) {
+          context.temp_contactor_info=res.friend_info
+        }else{
+          console.log(res)
         }
       } catch (error) {
         // 处理错误情况
