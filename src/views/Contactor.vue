@@ -691,7 +691,7 @@ export default {
         },
         async AgreeApply(idx, d) {//同意申请
             console.log(idx, d)
-            await this.$http.post('http://192.168.2.172:8070/agreeFriendApply',
+            await this.$http.post('http://192.168.2.220:8070/agreeFriendApply',
                 { apply_id: d.apply_id, user_id: window.sessionStorage.getItem("userid"), friend_id: d.applicant_id }).then(response => {
                     this.tableData3 = []
                     return this.$message.success('操作成功');
@@ -701,7 +701,7 @@ export default {
                 })
         },
         async NegateApply(idx, d) {
-            await this.$http.post('http://192.168.2.172:8070/disagreeFriendApply',
+            await this.$http.post('http://192.168.2.220:8070/disagreeFriendApply',
                 { apply_id: d.apply_id, user_id: window.sessionStorage.getItem("userid"), friend_id: d.applicant_id }).then(response => {
                     this.tableData3 = []
                     return this.$message.success('操作成功');
@@ -711,7 +711,7 @@ export default {
                 })
         },
         async Addf() {//添加好友或查看好友申请
-            await this.$http.post('http://192.168.2.172:8070/queryFriendApply',
+            await this.$http.post('http://192.168.2.220:8070/queryFriendApply',
                 { user_id: window.sessionStorage.getItem("userid") }).then(response => {
                     this.tableData3 = response.data.data.applications.applications
                     console.log(this.tableData3);
@@ -732,7 +732,7 @@ export default {
             this.Isclick5 = true
         },
         handleEnterGNandDesc() {//修改群名以及群公告
-            this.$http.post('http://192.168.2.172:8070/UpdateGroupInfo', { group_id: this.groupInfo.group_id, group_name: this.groupInfo.group_name, description: this.groupInfo.description })
+            this.$http.post('http://192.168.2.220:8070/UpdateGroupInfo', { group_id: this.groupInfo.group_id, group_name: this.groupInfo.group_name, description: this.groupInfo.description })
                 .then(response => {
                     // 处理请求成功的响应
                     console.log(response.data);
@@ -745,7 +745,7 @@ export default {
                 });
         },
         DissolveGroup() {//解散群聊
-            this.$http.post('http://192.168.2.172:8070/DissolveGroupInfo', { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id })
+            this.$http.post('http://192.168.2.220:8070/DissolveGroupInfo', { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id })
                 .then(response => {
                     // 处理请求成功的响应
                     console.log(response.data);
@@ -758,7 +758,7 @@ export default {
                 });
         },
         QuitGroup() {//退群
-            this.$http.post('http://192.168.2.172:8070/QuitGroup', { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id })
+            this.$http.post('http://192.168.2.220:8070/QuitGroup', { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id })
                 .then(response => {
                     // 处理请求成功的响应
                     console.log(response.data);
@@ -778,12 +778,16 @@ export default {
             } else {
                 this.ChangeGNotice8()
             }
+            this.$store.commit('change_group_status',{
+                contactor_id:this.groupInfo.group_id,
+                status:this.groupInfo.msg_type
+            })
+            //this.$router.go(0)
         },
         ChangeGNotice6() {//修改群备注
-            this.$http.post('http://192.168.2.172:8070/SetWhiteList', { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id })
+            this.$http.post('http://192.168.2.220:8070/SetWhiteList', { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id })
                 .then(response => {
                     // 处理请求成功的响应
-                    console.log(response.data);
                     return this.$message.success('操作成功');
                 })
                 .catch(error => {
@@ -793,7 +797,7 @@ export default {
                 });
         },
         ChangeGNotice7() {
-            this.$http.post('http://192.168.2.172:8070/SetGrayList', { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id })
+            this.$http.post('http://192.168.2.220:8070/SetGrayList', { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id })
                 .then(response => {
                     // 处理请求成功的响应
                     console.log(response.data);
@@ -806,7 +810,7 @@ export default {
                 });
         },
         ChangeGNotice8() {
-            this.$http.post('http://192.168.2.172:8070/SetBlackList', { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id })
+            this.$http.post('http://192.168.2.220:8070/SetBlackList', { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id })
                 .then(response => {
                     // 处理请求成功的响应
                     console.log(response.data);
@@ -823,7 +827,7 @@ export default {
             this.UpdataRemarkG()
         },
         async UpdataRemarkG() {//更新群聊备注
-            await this.$http.post('http://192.168.2.172:8070/SetGroupName',
+            await this.$http.post('http://192.168.2.220:8070/SetGroupName',
                 { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id, group_name: this.groupInfo.my_group_name }).then(response => {
                     console.log(response.data)
                     return this.$message.success('更新成功');
@@ -838,6 +842,7 @@ export default {
             } else {
                 this.UnBlockPrivateChat()
             }
+            
         },
         handleSwitchChange1() {
             if (this.status1 === true) {
@@ -847,7 +852,7 @@ export default {
             }
         },
         SetPrivateChatBlack() {//私聊拉黑
-            this.$http.post('http://192.168.2.172:8070/setPrivateChatBlack',
+            this.$http.post('http://192.168.2.220:8070/setPrivateChatBlack',
                 { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id }).then(response => {
                     console.log(response.data);
                     return this.$message.success('拉黑成功');
@@ -858,7 +863,7 @@ export default {
                 })
         },
         UnBlockPrivateChat() {//解除拉黑
-            this.$http.post('http://192.168.2.172:8070/unBlockPrivateChat',
+            this.$http.post('http://192.168.2.220:8070/unBlockPrivateChat',
                 { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id }).then(response => {
                     console.log(response.data);
                     return this.$message.success('解除拉黑成功');
@@ -869,7 +874,7 @@ export default {
                 })
         },
         SetFriendCircleBlack() {//不看他朋友圈
-            this.$http.post('http://192.168.2.172:8070/setFriendCircleBlack',
+            this.$http.post('http://192.168.2.220:8070/setFriendCircleBlack',
                 { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id }).then(response => {
                     console.log(response.data);
                     return this.$message.success('操作成功，将不展示他（她）的朋友圈');
@@ -880,7 +885,7 @@ export default {
                 })
         },
         UnBlockFriendCircle() {//解除 不看他朋友圈
-            this.$http.post('http://192.168.2.172:8070/unBlockFriendCircle',
+            this.$http.post('http://192.168.2.220:8070/unBlockFriendCircle',
                 { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id }).then(response => {
                     console.log(response.data);
                     return this.$message.success('解除成功');
@@ -891,7 +896,7 @@ export default {
                 })
         },
         Del() {
-            this.$http.post('http://192.168.2.172:8070/deleteFriend',
+            this.$http.post('http://192.168.2.220:8070/deleteFriend',
                 { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id }).then(response => {
                     return this.$message.success('删除成功');
                 }).catch(error => {
@@ -907,7 +912,7 @@ export default {
             // 添加输入框中的标签到标签数组
             if (this.newTag.trim() !== '') {
                 this.formcon.tags.push(this.newTag.trim());
-                await this.$http.post('http://192.168.2.172:8070/addFriendTag', { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id, tag: this.newTag })
+                await this.$http.post('http://192.168.2.220:8070/addFriendTag', { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id, tag: this.newTag })
                     .then(response => {
                         // 处理请求成功的响应
                         someAsyncFunction(() => {
@@ -927,7 +932,7 @@ export default {
             this.isTagHovered = isHovered ? index : null;
         },
         handleSelectChange() {//消息改变处理函数
-            this.$http.post('http://192.168.2.172:8070/setPrivateChatGray', { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id })
+            this.$http.post('http://192.168.2.220:8070/setPrivateChatGray', { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id })
                 .then(response => {
                     // 处理请求成功的响应
                     console.log(response.data);
@@ -936,6 +941,11 @@ export default {
                     // 处理请求错误
                     console.error(error);
                 });
+                console.log(this.info)
+                this.$store.commit('change_friend_status',{
+                friend_id:this.info.user_id,
+                status:this.info.is_private_chat_gray
+            })
         },
         handleEnter() {//更新备注
             this.$refs.inputNotes.blur(); // 让输入框失去焦点
@@ -945,7 +955,7 @@ export default {
             this.UpdataRemark()
         },
         async UpdataRemark() {//更新备注
-            await this.$http.post('http://192.168.2.172:8070/setFriendRemark',
+            await this.$http.post('http://192.168.2.220:8070/setFriendRemark',
                 { user_id: window.sessionStorage.getItem("userid"), friend_id: this.info.user_id, remark: this.formcon.notes }).then(response => {
                     return this.$message.success('更新成功');
                 }).catch(error => {
@@ -962,7 +972,7 @@ export default {
         async get_group_user_list(group_id) {
             group_id = '2172635274176102400'
             var id = window.sessionStorage.getItem("userid")
-            const { data: res } = await this.$http.post("http://192.168.2.172:8070/GetGroupAllUser", { user_id: id, group_id: group_id })
+            const { data: res } = await this.$http.post("http://192.168.2.220:8070/GetGroupAllUser", { user_id: id, group_id: group_id })
             console.log(res)
             this.tableData = res.data
             this.tableData.sort(function (a, b) {
@@ -1001,6 +1011,7 @@ export default {
             } else if (type == 8) {
                 return "屏蔽该群"
             }
+            
         },
         async toggleHighlight(userId) {//高亮显示好友，点击获取好友详细信息，消息通知下拉内容已选项禁用，切换main内容卡片
             this.highlightedUserId = this.highlightedUserId === userId ? '' : userId;
@@ -1011,13 +1022,13 @@ export default {
                 "user_id": window.sessionStorage.getItem("userid"),
                 "friend_id": info.friend_id
             }
-            await this.$http.post('http://192.168.2.172:8070/queryFriendInfo', fform).then(response => {
+            await this.$http.post('http://192.168.2.220:8070/queryFriendInfo', fform).then(response => {
                 this.info = response.data.data.friend_info
                 this.formcon.notes = response.data.data.friend_info.remark
                 this.formcon.signature = response.data.data.friend_info.signature === '' ? '无' : response.data.data.friend_info.signature
                 this.formcon.status = response.data.data.friend_info.status
                 this.formcon.tags.push(response.data.data.friend_info.tags === null ? '无' : response.data.data.friend_info.tags)
-                console.log(this.formcon.tags[0])
+                console.log(this.info)
 
             }).catch(error => {
                 console.log(error)
@@ -1035,13 +1046,14 @@ export default {
             // }, 200);
             this.Isclick2 = false
             this.Isclick = true
+            console.log(this.info.is_private_chat_gray)
         },
 
         async MouseClick(id) {//点击获取群聊详细信息，消息通知下拉内容已选项禁用，切换main内容卡片
             // this.groupInfo = this.my_group_list.find(item => item.group_id === id)
 
 
-            await this.$http.post('http://192.168.2.172:8070/QueryGroupInfo', { group_id: id, user_id: window.sessionStorage.getItem("userid") }).then(response => {
+            await this.$http.post('http://192.168.2.220:8070/QueryGroupInfo', { group_id: id, user_id: window.sessionStorage.getItem("userid") }).then(response => {
                 this.groupInfo = response.data.data
                 console.log(this.groupInfo)
             }).catch(error => {
