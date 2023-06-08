@@ -778,12 +778,16 @@ export default {
             } else {
                 this.ChangeGNotice8()
             }
+            this.$store.commit('change_group_status',{
+                contactor_id:this.groupInfo.group_id,
+                status:this.groupInfo.msg_type
+            })
+            //this.$router.go(0)
         },
         ChangeGNotice6() {//修改群备注
             this.$http.post('http://192.168.2.220:8070/SetWhiteList', { user_id: window.sessionStorage.getItem("userid"), group_id: this.groupInfo.group_id })
                 .then(response => {
                     // 处理请求成功的响应
-                    console.log(response.data);
                     return this.$message.success('操作成功');
                 })
                 .catch(error => {
@@ -838,6 +842,7 @@ export default {
             } else {
                 this.UnBlockPrivateChat()
             }
+            
         },
         handleSwitchChange1() {
             if (this.status1 === true) {
@@ -936,6 +941,11 @@ export default {
                     // 处理请求错误
                     console.error(error);
                 });
+                console.log(this.info)
+                this.$store.commit('change_friend_status',{
+                friend_id:this.info.user_id,
+                status:this.info.is_private_chat_gray
+            })
         },
         handleEnter() {//更新备注
             this.$refs.inputNotes.blur(); // 让输入框失去焦点
@@ -1001,6 +1011,7 @@ export default {
             } else if (type == 8) {
                 return "屏蔽该群"
             }
+            
         },
         async toggleHighlight(userId) {//高亮显示好友，点击获取好友详细信息，消息通知下拉内容已选项禁用，切换main内容卡片
             this.highlightedUserId = this.highlightedUserId === userId ? '' : userId;
@@ -1017,7 +1028,7 @@ export default {
                 this.formcon.signature = response.data.data.friend_info.signature === '' ? '无' : response.data.data.friend_info.signature
                 this.formcon.status = response.data.data.friend_info.status
                 this.formcon.tags.push(response.data.data.friend_info.tags === null ? '无' : response.data.data.friend_info.tags)
-                console.log(this.formcon.tags[0])
+                console.log(this.info)
 
             }).catch(error => {
                 console.log(error)
@@ -1035,6 +1046,7 @@ export default {
             // }, 200);
             this.Isclick2 = false
             this.Isclick = true
+            console.log(this.info.is_private_chat_gray)
         },
 
         async MouseClick(id) {//点击获取群聊详细信息，消息通知下拉内容已选项禁用，切换main内容卡片

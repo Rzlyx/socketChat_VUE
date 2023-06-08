@@ -145,6 +145,38 @@ const store = new Vuex.Store({
     ],
   },
   mutations: {
+    change_friend_status(state,info){
+      var target_contact = state.user_list.find(obj=> obj.id==info.friend_id)
+      console.log(target_contact)
+      if(target_contact){
+        console.log(info.status)
+        target_contact.status=info.is_private_chat_gray==true?"info":"danger"
+      }
+      console.log(target_contact)
+    },
+    change_group_status(state,info){
+      console.log("info:",info)
+      console.log(state.user_list)
+      // var target_contact = state.user_list.find(obj=> obj.id==info.contactor_id)
+      //console.log(state.user_list[1].id==info.contactor_id)
+      for(var i=0;i<state.user_list.length;i++){
+        console.log(state.user_list[i].id==info.contactor_id)
+        if(state.user_list[i].id==info.contactor_id){
+          console.log(info)
+            if(info.status==7){
+              state.user_list[i].status = "danger"
+            }else if(info.status==6){
+              state.user_list[i].status  ="info"
+            }
+            // console.log(state.user_list[i])
+          
+        }
+      }
+      console.log(state.user_list,231135)
+      this.dispatch('update_msg_user');
+
+
+    },
     get_msg_user(context, msg_user) {
       console.log(msg_user,1111)
       var highlighted = false;
@@ -347,10 +379,10 @@ const store = new Vuex.Store({
         else {//如果当前页面不是这个联系人，那就是把气泡加一
           targetObj.new_msg = message.context
           targetObj.num++
-
+          console.log(targetObj)
           targetObj.new_msg = message.context
           targetObj.time = message.time
-
+          if(targetObj.status=="danger")
           context.MsgSum++
         }
       } else {//如果没找到，构建一个新的对象塞进去
@@ -360,7 +392,7 @@ const store = new Vuex.Store({
         console.log("group:",targetGroup)
         if(targetObj2&&!targetGroup){
           var name =targetObj2.name
-          var id=send_id
+          var id=id__
         }else{
           var name =targetGroup.group_name
           var id =message.receive_id
@@ -391,16 +423,16 @@ const store = new Vuex.Store({
     async update_msg_user(context) {
       var id = window.sessionStorage.getItem("userid")
       const newContactorList = context.state.user_list.map(user => {
-        if (user.status == "") var new_status = 0
-        else var new_status = 1
+        
         return {
           id: user.id,
           new_msg: user.new_msg,
           name: user.name,
           time: user.time,
-          status: new_status
+          status: user.status
         };
       });
+      console.log(newContactorList,444444444444444)
       try {
         const { data: res } = await axios.post('http://192.168.2.220:8070/setContactorList', {user_id:id,contactor_list:newContactorList});
         // 处理响应数据或其他操作
@@ -429,6 +461,7 @@ const store = new Vuex.Store({
         const { data: res } = await axios.post('http://192.168.2.220:8070/setReadTime', info);
         // 处理响应数据或其他操作
         if (res.code === 1000) {
+          console.log("read_time 成功")
         }
       } catch (error) {
         // 处理错误情况
@@ -459,7 +492,8 @@ const store = new Vuex.Store({
       } catch (error) {
         // 处理错误情况
       }
-    }
+    },
+   
   },
   modules: {}
 })
